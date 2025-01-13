@@ -15,7 +15,7 @@ export const Login = () => {
         if (ref.current.querySelector('[name="user_id"]').value !== "gis") {
             return alert("ID가 옳바르지 않습니다.");
         }
-        const menu = [
+        const menu = [ // DB로 관리할 메뉴 임시 설정
             {
                 MENU_IDX: 0,
                 LVL: 1,
@@ -33,12 +33,12 @@ export const Login = () => {
                 USE_TN: "Y"
             }
         ]
-        useMenuStore.getState().setMenuList(menu);
+        useMenuStore.getState().setMenuList(menu); // FETCH 후 SET 변경
         useLoginStore.getState().setLoginStatus(true);
-        menuParse(0);
+        menuParse(0); // 메인화면 default
         navigate("/");
     }
-    return (    
+    return (
         <>
             <form ref={ref} onSubmit={loginHandler}>
                 <div className="loginbody">

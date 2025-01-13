@@ -1,5 +1,5 @@
-import { PageController } from "../controller/PageController";
-import { Header } from "../ui/header";
+import PageController from "../controller/PageController";
+import Header from "../ui/header";
 
 
 export const MainPage = () => {

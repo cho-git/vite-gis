@@ -3,7 +3,7 @@ import { useLoginStore } from '../stores/LoginStore'
 import { useNavigate } from 'react-router-dom'
 import '../assets/css/common.css'
 
-export const Header = () => {
+const Header = () => {
     const navigate = useNavigate();
     const menulist = useMenuStore((a) => a.menuList)
 
@@ -14,7 +14,7 @@ export const Header = () => {
     const pagehandeler = (id) => {
         menuParse(id);
     }
- 
+
     return (
         <>
             <div className="header">
@@ -38,3 +38,4 @@ export const Header = () => {
     )
 }
 
+export default Header; 
