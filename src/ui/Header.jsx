@@ -1,26 +1,26 @@
+import { menuParse, useMenuStore } from '../stores/MenuStore'
+import { useLoginStore } from '../stores/LoginStore'
 import { useNavigate } from 'react-router-dom'
 import '../assets/css/common.css'
-import { useLoginStore } from '../stores/LoginStore'
-import { useMenuStore } from '../stores/MenuStore'
 
 export const Header = () => {
     const navigate = useNavigate();
-    const menulist = useMenuStore((a) => a.menulist)
-    const currentMenuItem = useMenuStore(a => a.currentMenuItem);
+    const menulist = useMenuStore((a) => a.menuList)
+
     const logout = () => {
         useLoginStore.getState().setLoginStatus(false)
         navigate("/login");
     }
     const pagehandeler = (id) => {
-        console.log(id, currentMenuItem, menulist);
+        menuParse(id);
     }
-
+ 
     return (
         <>
             <div className="header">
                 <h1>
                     {menulist && menulist.length > 0 &&
-                        menulist.map((item) => (
+                        menulist.filter((menu) => menu.LVL === 1).sort((a, b) => a.SORT_ORDER - b.SORT_ORDER).map((item) => (
                             <span
                                 key={item.MENU_IDX}
                                 id={item.MENU_IDX}

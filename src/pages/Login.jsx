@@ -1,29 +1,44 @@
-import { useRef } from "react";
 import { useLoginStore } from "../stores/LoginStore";
+import { menuParse, useMenuStore } from "../stores/MenuStore";
 import { useNavigate } from "react-router-dom";
-import { useMenuStore } from "../stores/MenuStore";
+import { useRef } from "react";
 
 
 export const Login = () => {
     const navigate = useNavigate();
     const ref = useRef();
     const loginHandler = () => {
+        event.preventDefault()
         if (ref.current.querySelector('[name="user_id"]').value === "") {
             return alert("ID를 입력해주세요");
         }
         if (ref.current.querySelector('[name="user_id"]').value !== "gis") {
             return alert("ID가 옳바르지 않습니다.");
         }
-        const menu = [{
-            MENU_IDX: 1,
-            MENU_NM: "gis",
-            PAGE_ROUTE: "/gis/MainGis.view"
-        }]
-        useMenuStore.getState().setMenuList(menu); // 메뉴 불러오기 .
+        const menu = [
+            {
+                MENU_IDX: 0,
+                LVL: 1,
+                MENU_NM: "메인화면",
+                PAGE_ROUTE: "/main/Home.view",
+                SORT_ORDER: 0,
+                USE_TN: "Y"
+            },
+            {
+                MENU_IDX: 1,
+                LVL: 1,
+                MENU_NM: "GIS",
+                PAGE_ROUTE: "/gis/MainGis.view",
+                SORT_ORDER: 1,
+                USE_TN: "Y"
+            }
+        ]
+        useMenuStore.getState().setMenuList(menu);
         useLoginStore.getState().setLoginStatus(true);
+        menuParse(0);
         navigate("/");
     }
-    return (
+    return (    
         <>
             <form ref={ref} onSubmit={loginHandler}>
                 <div className="loginbody">
