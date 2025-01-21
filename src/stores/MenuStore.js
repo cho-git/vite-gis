@@ -27,7 +27,7 @@ export const menuParse = async (idx) => {
     const folder = route.split('/')[1];
     const page = route.split('/')[2].replace(/.view/gi, '');
     try {
-        const component = await import(`../features/${folder}/${page}`);
+        const component = await import(`../features/${folder}/${page}`)
         setCurrentMenu({
             idx: targetmenu.MENU_IDX,
             name: targetmenu.MENU_NM,

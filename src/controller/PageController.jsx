@@ -5,8 +5,13 @@ const PageController = () => {
     const { currentMenuItem } = useMenuStore((state) => state);
     const PageComponent = currentMenuItem?.PageComponent;
     return (
-        <> {currentMenuItem && PageComponent ? <PageComponent /> : <MainPage />}
-        </>
+        <div>
+            {PageComponent ? (
+                <PageComponent />
+            ) : (
+                <MainPage />
+            )}
+        </div>
     );
 };
 
