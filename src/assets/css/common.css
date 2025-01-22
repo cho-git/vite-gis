@@ -1,24 +1,8 @@
-.header{margin:0 auto;padding:0px 0 0px;border-top:none !important;border-bottom:1px solid #3F51B5; background:#3F51B5; height:40px; width:100%; position:fixed;min-width:768px;z-index:1001;}
+.header{margin:0 auto;padding:0px 0 0px;border-top:none !important;border-bottom:1px solid #3F51B5; background:#3F51B5; height:5vh; width:100%; position:fixed;min-width:768px;z-index:1001;position: absolute; top: 0;}
 .header h1{float:left;font-size:1.25em;font-weight:700;padding:0px;line-height:40px; letter-spacing:-0.5px;height:40px; width:100%; margin:0; text-align:center; gap: 10px; display: flex;}
-.header h1 .logo{padding:0px 4px 0px 4px;display:inline-block;}
-.header {position: absolute; top: 0;}
 .header .title{color: white; flex: 1; text-align: center;}
-.header .logout{position: absolute; right: 0;display:inline-block;background:#2D3D9C url(../img/logout_icon.png) no-repeat center center;text-indent:-9999px;width:40px;height:40px;margin:0;background-size: 19px;}
-.loginbody{	display: flex;
-	justify-content: center;
-	align-items: center;
-	margin: 0;
-	/* background: linear-gradient(#7288f1, #3f51b5c7, #7288f1); */
-	color: #404d5b;
-	font-weight: 500;
-	font-size: 1.05em;
-	font-family: "Nanum Gothic", sans-serif;}
+.header .logout{position: absolute; right: 0;display:inline-block;background:#2D3D9C url(../img/logout_icon.png) no-repeat center center;text-indent:-9999px;width:5vh;height:5vh;margin:0;background-size: 19px;}
+.loginbody{	display: flex;justify-content: center;	align-items: center;	margin: 0;	color: #404d5b;	font-weight: 500;	font-size: 1.05em;	font-family: "Nanum Gothic", sans-serif;}
 .loginbody {position: absolute; width: 100%;}
 .loginbody .login_btn{min-height: 10px; height: 40px;border: 1px solid #000;}
 .loginbody .login_input{min-height: 10px; height: 40px;border: 1px solid #000;}
-
-.header .gnb{float:left; height:100%; margin-left:5px;}
-.header .gnb ul li{float:left;letter-spacing:-1px; font-size:12px; color:#fff; width:90px;height:40px; text-align:center;line-height:24px;padding:0;}
-.header .gnb ul li a{color:#fff;font-size:15px;font-weight:600;height:40px;line-height:40px; }
-.header .gnb ul li a:hover{display:inline-block;color:#fff; width:95px; height:40px;background:#97A8D6; line-height:40px;border-bottom: 1px solid #97A8D6;}
-.header .gnb ul li a.on{display:inline-block;color:#fff; width:76px; height:40px;background:#97A8D6; line-height:40px;border-bottom: 1px solid #97A8D6;}

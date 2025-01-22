@@ -1,35 +1,23 @@
 import React, { useEffect, useRef } from "react";
-import Map from 'ol/Map.js';
-import View from 'ol/View.js';
-import { fromLonLat } from 'ol/proj';
-import TileLayer from 'ol/layer/Tile.js';
-import OSM from 'ol/source/OSM.js';
-import { useMapLayerStore } from "../../stores/MapLayerStore";
+import { changeLayer, useMapStore } from "../../stores/MapLayerStore";
 import '../../assets/css/base.css'
+
 const MainGis = () => {
     const mapRef = useRef(null);
-    const mapLayer = useMapLayerStore(a => a.mapLayerStatus)
+    const VarMap = useMapStore(a => a.VarMap);
     useEffect(() => {
-        if (mapRef.current) {
-            const map = new Map({
-                view: new View({
-                    center: fromLonLat([126.942069, 37.547771]), // 대흥역
-                    zoom: 18,
-                }),
-                layers: [mapLayer.tilelayer],
-                target: mapRef.current,
-            });
-
-            return () => {
-                map.setTarget(null);
-            };
+        if (!mapRef?.current?.querySelector('[class="ol-viewport"]')) {
+            VarMap.setTarget(mapRef.current);
         }
     }, []);
 
+
     return (
-        < >
-            <div className="main_gis" ref={mapRef}/>
-        </ >
+        <>
+            <div className="main_gis" ref={mapRef} />
+            <button onClick={() => changeLayer("osmLayer")}>OSMLayer</button>
+            <button onClick={() => changeLayer("vworldLayer")}>VWorldLayer</button>
+        </>
     );
 };
 
