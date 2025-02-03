@@ -1,6 +1,8 @@
 import { OSM, XYZ } from "ol/source";
 import { config } from "../Config";
 import TileLayer from "ol/layer/Tile";
+import VectorLayer from "ol/layer/Vector";
+import VectorSource from "ol/source/Vector";
 
 
 // layers: [Layers.find((item) => item.values_.id === ${id]})]
@@ -20,8 +22,14 @@ export const Layers = [
             attributionsCollapsible: false,
         }),
         visible: true,
+        // <div class="ol-scale-line-inner" style="width: 65px;">1 ″</div>
         // minResolution: 0.25,
     }),
+    new VectorLayer({
+        id: 'drawLayer',
+        source: new VectorSource({ wrapX: false }),
+        visible: false,
+    })
 ]
 
 //fromlonlat :  4326 > 3857
@@ -34,7 +42,7 @@ export const Layers = [
 // maxResolution: 200,// 최대 표시 해상도
 // preload: Infinity, //지정한 레벨까지 저해상도 타일을 미리 로드 (0은 미사용)
 // extent : true // 레이어의 렌더링 범위 , 해당 범위를 넘어가면 데이터 표시 x
-// visible // 표시 여부 
+// visible // 표시 여부
 // opacity // 투명도
 // className // 클래스명
 // useInterimTilesOnError // 오류 시 중간 타일 사용 여부

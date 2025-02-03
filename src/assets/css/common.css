@@ -1,8 +1,15 @@
-.header{margin:0 auto;padding:0px 0 0px;border-top:none !important;border-bottom:1px solid #3F51B5; background:#3F51B5; height:5vh; width:100%; position:fixed;min-width:768px;z-index:1001;position: absolute; top: 0;}
+.header{margin:0 auto;padding:0px 0 0px;border-top:none !important;border-bottom:1px solid #3F51B5; background:#3F51B5; height:5vh; width:100%; position:fixed;min-width:768px;z-index: 1000;position: absolute; top: 0;}
 .header h1{float:left;font-size:1.25em;font-weight:700;padding:0px;line-height:40px; letter-spacing:-0.5px;height:40px; width:100%; margin:0; text-align:center; gap: 10px; display: flex;}
 .header .title{color: white; flex: 1; text-align: center;}
 .header .logout{position: absolute; right: 0;display:inline-block;background:#2D3D9C url(../img/logout_icon.png) no-repeat center center;text-indent:-9999px;width:5vh;height:5vh;margin:0;background-size: 19px;}
-.loginbody{	display: flex;justify-content: center;	align-items: center;	margin: 0;	color: #404d5b;	font-weight: 500;	font-size: 1.05em;	font-family: "Nanum Gothic", sans-serif;}
+.loginbody{	display: flex;flex-direction: column;justify-content: center;	align-items: center;	margin: 0;	color: #404d5b;	font-weight: 500;	font-size: 1.05em;	font-family: "Nanum Gothic", sans-serif;}
 .loginbody {position: absolute; width: 100%;}
-.loginbody .login_btn{min-height: 10px; height: 40px;border: 1px solid #000;}
-.loginbody .login_input{min-height: 10px; height: 40px;border: 1px solid #000;}
+.loginbody section{width: 90% ;margin-bottom: 10px;}
+.loginbody .login_btn{min-height: 10px; height: 40px;border: 1px solid #000;width: 90%;}
+.loginbody .login_input{min-height: 10px; height: 40px;border: 1px solid #000;width: 100%;}
+/* .login_label{position: absolute; top: 10px; left: 6%;} */
+
+.login_input:focus + .login_label {
+    opacity: 0; /* 레이블 숨기기 */
+    pointer-events: none; /* 클릭 불가로 설정 */
+}

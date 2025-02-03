@@ -48,6 +48,8 @@ export const Login = () => {
                             type="text"
                             className="login_input"
                             name="user_id"
+                            id="user_id"
+                            placeholder=" "
                         />
                     </section>
                     <button type="submit" className="login_btn">login</button>
