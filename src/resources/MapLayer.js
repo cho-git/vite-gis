@@ -13,6 +13,7 @@ export const Layers = [
         source: new OSM(),
         visible: false,
     }),
+
     // vworld Layer
     new TileLayer({
         id: 'vworldLayer',
@@ -22,13 +23,28 @@ export const Layers = [
             attributionsCollapsible: false,
         }),
         visible: true,
-        // <div class="ol-scale-line-inner" style="width: 65px;">1 ″</div>
         // minResolution: 0.25,
     }),
+    
+    // drawLayer
     new VectorLayer({
         id: 'drawLayer',
         source: new VectorSource({ wrapX: false }),
-        visible: false,
+          visible: true,
+    }),
+
+    // drawLayer
+    new VectorLayer({
+        id: 'measureLayer',
+        source: new VectorSource({ wrapX: false }),
+        style: {
+            'fill-color': 'rgba(255, 255, 255, 0.2)',
+            'stroke-color': '#ffcc33',
+            'stroke-width': 2,
+            'circle-radius': 7,
+            'circle-fill-color': '#ffcc33',
+          },
+        visible: true,
     })
 ]
 

@@ -7,7 +7,7 @@ import { ScaleLine, defaults } from 'ol/control.js';
 
 
 export const mapStatusStore = (set) => ({
-    gisMap: new Map({
+    map : new Map({
         controls: defaults({
             attribution: true,
             // zoom: false,
@@ -16,7 +16,7 @@ export const mapStatusStore = (set) => ({
             attribution: false, //기본 버튼
         }).extend([
             new ScaleLine({
-                units: 'degrees',
+                units: 'degrees', // imperial inch , un inch , nautical mile , metric
             })
         ]),
         view: new View({
@@ -26,7 +26,7 @@ export const mapStatusStore = (set) => ({
             minZoom: 5.9,
         }),
         layers: Layers,
-        target: "main_gis",
+        target: '',
     }),
 })
 
