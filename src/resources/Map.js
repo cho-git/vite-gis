@@ -3,7 +3,7 @@ import { defaults, ScaleLine } from "ol/control";
 import { fromLonLat } from "ol/proj";
 import { Layers } from "./MapLayer";
 
-export let gisMap = new Map({
+export const gisMap = new Map({
     controls: defaults({
         attribution: true,
         // zoom: false,
@@ -18,5 +18,27 @@ export let gisMap = new Map({
         minZoom: 5,
     }),
     layers: Layers,
-    target: "main_gis",
+    target: "",
 })
+
+// export const gisMap = () => {
+
+//     const map = new Map({
+//         controls: defaults({
+//             attribution: true,
+//             // zoom: false,
+//             rotate: false,
+//             scaleLine: false,
+//             attribution: false, //기본 버튼
+//         }),
+//         view: new View({
+//             center: fromLonLat([126.942069, 37.547771]),
+//             zoom: 18,
+//             maxZoom: 21,
+//             minZoom: 5,
+//         }),
+//         layers: Layers,
+//         target: "map",
+//     })
+//     return map;
+// }

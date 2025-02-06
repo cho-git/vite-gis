@@ -12,6 +12,10 @@ import { unByKey } from 'ol/Observable.js';
 import Modify from 'ol/interaction/Modify.js';
 import { Circle, LineString, Polygon } from "ol/geom";
 
+//////////////////////////////////////////////////////////////////
+//////////////////////////MainGis/////////////////////////////////
+//////////////////////////////////////////////////////////////////
+
 // source
 export function getSource(id) {
     const array = gisMap.getLayers().array_
@@ -19,6 +23,7 @@ export function getSource(id) {
     if (!layer) return
     return layer.values_.source
 }
+
 // 그리기
 export function changeDraw(type) {
     endDraw()

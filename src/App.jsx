@@ -27,12 +27,11 @@
 
 
 // React.lazy로 동적 로딩
+
 import React, { Suspense } from "react";
 import "./assets/css/base.css"
 
-
-// const MainPage = React.lazy(() => import("./pages/MainPage"));
-// const Logins = React.lazy(() => import("./pages/Login"));
+ 
 const ReactMap = React.lazy(() => import("./features/gis/ReactMap"));
 
 const App = () => {

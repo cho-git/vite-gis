@@ -32,14 +32,6 @@ export const Login = () => {
                 SORT_ORDER: 1,
                 USE_TN: "Y"
             },
-            {
-                MENU_IDX: 2,
-                LVL: 1,
-                MENU_NM: "ReactMap",
-                PAGE_ROUTE: "/gis/ReactMap.view",
-                SORT_ORDER: 1,
-                USE_TN: "Y"
-            }
         ]
         useMenuStore.getState().setMenuList(menu); // FETCH 후 SET 변경
         useLoginStore.getState().setLoginStatus(true);
