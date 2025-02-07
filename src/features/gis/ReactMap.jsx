@@ -31,7 +31,6 @@ const ReactMap = () => {
                 alert("center : " + center + "\nzoom : " + currntZoom)
             }
         }
-
         map.on("click", mapClick); // 맵 클릭시 
         map.on("moveend", mapmove); // 맵 이동시
 
@@ -58,13 +57,15 @@ const ReactMap = () => {
                 className: "tooltip_overlay"
             });
             const existOverlay = overlays.find((over) => over.getElement()?.id === item.id);
-            if (item.modi) {
-                map.removeOverlay(existOverlay);
-                map.addOverlay(div);
-            } else {
-                if (existOverlay) return;
-                map.addOverlay(div);
-            }
+            // if (item.modi) {
+            // console.log(1)
+            map.removeOverlay(existOverlay);
+            map.addOverlay(div);
+            // } else {
+            // if (existOverlay) return;
+            // console.log(2)
+            // map.addOverlay(div);
+            // }
         })
     }, [tooltip])
 

@@ -91,7 +91,7 @@ export function changeMeasure(type, setToolTip) {
     const layer = getLayer("measureLayer");
     if (!source) return
     let sktch;
-    let listener;
+    let listener; 
     let measure;
     let coordi;
 
@@ -204,6 +204,7 @@ export function changeLayer(id) {
     const map = useMapStore.getState().map;
     const layers = map.getLayers().getArray();
     for (let key in layers) {
+        if (layers[key].values_.id === "vectorLayer" || layers[key].values_.id === "measureLayer") return
         layers[key].setVisible(layers[key].values_.id === id);
     }
 }
