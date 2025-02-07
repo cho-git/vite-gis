@@ -5,8 +5,8 @@ import { Layers } from "./MapLayer";
 
 export const gisMap = new Map({
     controls: defaults({
-        attribution: true,
-        // zoom: false,
+        // attribution: true,
+        zoom: false,
         rotate: false,
         scaleLine: false,
         attribution: false, //기본 버튼
@@ -14,7 +14,7 @@ export const gisMap = new Map({
     view: new View({
         center: fromLonLat([126.942069, 37.547771]),
         zoom: 18,
-        maxZoom: 21,
+        maxZoom: 20,
         minZoom: 5,
     }),
     layers: Layers,

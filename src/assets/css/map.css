@@ -1,3 +1,4 @@
+
 .main_gis{width: 100%; height: 95vh;}
 #mapbtns{position: absolute;left: 10px;top: 40%;display: flex;flex-wrap: nowrap;flex-direction: column;gap: 10px;}
 #mapbtns2{position: absolute;right: 30%;top: 7%;display: flex;align-items: baseline;gap: 10px; width: 15%; }
@@ -5,7 +6,7 @@
 #mapbtns2 #draw_select option{background-color: white;color: black;}
 #mapbtns2 #measure_select{border-radius: 8px;height:30px;width: 100%;border: 1px solid #CEC5CC;font-size: 13px;text-align: center; background-color: rgb(70, 109, 234); color: white;appearance:none;}
 #measure_select option{background-color: white;color: black;}
-#mapbtns button{border: 1px solid #CEC5CC;font-size: 13px;font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;background-color: rgb(70, 109, 234); color: white;}
+#mapbtns button{border: 1px solid #CEC5CC;font-size: 13px;font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;background-color: rgb(70, 109, 234); color: white;border-radius: 8px; border: 1px solid transparent; padding: 0.6em 1em;}
 /* .ol-scale-line-inner{position: absolute;bottom: 3%;left: 3%; color: black;} */
 /* .ol-zoom{position: absolute;; left: 10px;top: 5%;display: flex;flex-wrap: nowrap;flex-direction: column;gap: 10px;} */
 /* .ol-zoom button{border: 1px solid #CEC5CC;width: 1;text-align: center;} */
@@ -32,9 +33,29 @@
 /* ReactMap */
 .map{position: absolute;top: 0; width: 100%; height: 100%;}
 #map_btn_div{position: absolute;left: 10px;top: 40%;display: flex;flex-wrap: nowrap;flex-direction: column;gap: 10px;}
-#map_btn_div button{border: 1px solid #CEC5CC;font-size: 13px;font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;background-color: rgb(70, 109, 234); color: white;}
+#map_btn_div button{border: 1px solid #CEC5CC;font-size: 13px;font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;background-color: rgb(70, 109, 234); color: white;border-radius: 8px; border: 1px solid transparent; padding: 0.6em 1em;}
 
 #map_sel_div{position: absolute;right: 15%;top: 3%;display: flex;align-items: baseline;gap: 10px; width: 15%;}
 #map_sel_div #draw_select{border-radius: 8px;height:30px;width: 100%;border: 1px solid #CEC5CC;font-size: 13px;text-align: center; background-color: rgb(70, 109, 234); color: white;appearance:none;}
 #map_sel_div #measure_select{border-radius: 8px;height:30px;width: 100%;border: 1px solid #CEC5CC;font-size: 13px;text-align: center; background-color: rgb(70, 109, 234); color: white;appearance:none;}
 #map_sel_div select option{background-color: white;color: black;}
+
+#map_zoom_div{position: absolute;left: 10px;top: 3%;display: flex;align-items: baseline;gap: 5px;flex-direction: column;}
+#map_zoom_div button{height: 20px; width:20px;padding: 15px; text-align: center;display: flex;align-items: center;justify-content: center;font-weight: 600;}
+.tooltip_box{font-weight: 600;font-size: 18px;background-color: rgba(255, 255, 255, 0.5)}
+
+
+
+
+
+
+
+/* button :not(#zoom_in #zoom_out){
+  border-radius: 8px; border: 1px solid transparent; padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+} */

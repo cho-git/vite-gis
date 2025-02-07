@@ -1,7 +1,8 @@
-import { addControlDiv, changeDraw, changeMeasure, endDraw, moveCenter } from "../../function/MapFunc";
+import React, { useEffect, useRef, useState } from "react";
+import { addControlDiv, changeDraw, changeLayer, changeMeasure, endDraw, getLayer, getSource, moveCenter, ZoomControl } from "../../function/MapFunc";
 import { elementValueChange, getWishElement } from "../../function/CommonFunc";
 import { useMapStore } from "../../stores/MapStore";
-import { useEffect, useRef } from "react";
+import { Overlay } from "ol";
 
 import "../../assets/css/map.css"
 
@@ -12,45 +13,69 @@ const ReactMap = () => {
     const mapRef = useRef();
     const Ref = useRef();
 
+    const [tooltip, setToolTip] = useState([]);
+
     useEffect(() => {
         if (!mapRef.current || !Ref.current) return;
         map.setTarget(mapRef.current);
+
         const mapClick = (e) => {
             console.log(e.coordinate);
         };
+        const mapmove = () => {
+            const center = map.getView().getCenter();
+            const minZoom = map.getView().getMinZoom()
+            const currntZoom = map.getView().getZoom();
 
-        map.on("click", mapClick); // 새 이벤트 등록
+            if (currntZoom === minZoom) {
+                alert("center : " + center + "\nzoom : " + currntZoom)
+            }
+        }
 
-        const btndiv = getWishElement(Ref, '[id="map_btn_div"]');
-        const seldiv = getWishElement(Ref, '[id="map_sel_div"]');
-        addControlDiv(btndiv);
-        addControlDiv(seldiv);
+        map.on("click", mapClick); // 맵 클릭시 
+        map.on("moveend", mapmove); // 맵 이동시
+
+        addControlDiv(Ref, '[id="map_btn_div"]'); // 그리기 종료 라인
+        addControlDiv(Ref, '[id="map_sel_div"]'); // 그리기 , 측정 라인
+        addControlDiv(Ref, '[id="map_zoom_div"]'); // + - zoomin,out 라인
 
         return () => {
             map.un("click", mapClick);
+            map.un("moveend", mapmove);
         };
     }, []);
 
+    useEffect(() => {
+        if (tooltip.length === 0) return
+        console.log(tooltip);
+        tooltip.forEach((item) => {
+            const existOverlay = map.getOverlays().getArray().find((overlay) => {
+                return overlay.getElement()?.id === item.id;
+            });
+            if (existOverlay) return;
+
+            const element = Ref.current.querySelector(`[id="${item.id}"]`);
+            if (!element) return;
+
+            const div = new Overlay({
+                element: element,
+                position: item.coordi,
+                className: "tooltip_overlay"
+            });
+
+            map.addOverlay(div);
+        })
+    }, [tooltip])
 
     const test = () => {
-        console.log(map.getView().getZoom());
-        console.log(mapRef);
-        debugger
+        const zoomdiv = getWishElement(Ref, '[id="tooltip_box"]');
+
     }
 
-
-    // const [user, setUser] = useState(1);
-    // useEffect(() => {
-    //     console.log('return 이전 ', user);
-    //     return () => {
-    //         console.log('return 이후 ', user);
-    //     }
-    // }, [user])
-
     const selectHandler = (func, type) => {
+        endDraw();
         switch (func) {
             case "endDraw":
-                endDraw();
                 elementValueChange(mapRef, '[id ="draw_select"]', "None");
                 elementValueChange(mapRef, '[id ="measure_select"]', "None");
                 break
@@ -59,35 +84,47 @@ const ReactMap = () => {
                 elementValueChange(mapRef, '[id ="measure_select"]', "None");
                 break
             case "changeMeasure":
-                changeMeasure(value);
+                changeMeasure(type, setToolTip);
                 elementValueChange(mapRef, '[id ="draw_select"]', "None");
                 break
-            // case "removeSource":
-            //     removeSource(value);
-            //     Ref.current.querySelector('[id ="draw_select"]').value = "None";
-            //     Ref.current.querySelector('[id ="measure_select"]').value = "None";
-            //     break
             default:
                 break
         }
-
-
     }
-
+    const removeSource = (layer) => {
+        endDraw();
+        const source = getSource(layer);
+        source.clear();
+        if (layer === "measureLayer") {
+            const overlay = map.getOverlays().getArray().filter((item) => item.element.className === "tooltip_overlay");
+            if (!overlay || overlay.length === 0) return
+            for (let key in overlay) {
+                map.removeOverlay(overlay[key])
+            }
+        }
+        elementValueChange(mapRef, '[id ="draw_select"]', "None");
+        elementValueChange(mapRef, '[id ="measure_select"]', "None");
+    }
 
     return (
         <>
             <div ref={Ref}>
                 <div ref={mapRef} className="map" />
+                <div id="map_zoom_div">
+                    <button id="zoom_in" onClick={() => ZoomControl("in")}>+</button>
+                    <button id="zoom_out" onClick={() => ZoomControl("out")}>-</button>
+                </div>
+
                 <div id="map_btn_div">
                     <button id="endDraw" onClick={() => { selectHandler("endDraw") }}>그리기 종료</button>
-                    <button id="removeDraw" onClick={() => { setUser(() => user + 1) }}>그리기 지우기</button>
-                    <button id="removeMeasure" onClick={() => { setUser(() => user + 1) }}>측정 지우기</button>
+                    <button id="removeDraw" onClick={() => { removeSource("drawLayer") }}>그리기 지우기</button>
+                    <button id="removeMeasure" onClick={() => { removeSource("measureLayer") }}>측정 지우기</button>
                     <button id="moveCenter" onClick={() => moveCenter()}>center</button>
-                    <button id="OSMLayer" onClick={() => { setUser(() => user + 1) }}>OSMLayer</button>
-                    <button id="VworldLayer" onClick={() => { setUser(() => user + 1) }}>VWorldLayer</button>
+                    <button id="OSMLayer" onClick={() => { changeLayer("osmLayer") }}>OSMLayer</button>
+                    <button id="VworldLayer" onClick={() => { changeLayer("vworldLayer") }}>VWorldLayer</button>
                     <button id="TEST" onClick={() => test()}>TEST</button>
                 </div>
+
                 <div id="map_sel_div">
                     <select id="draw_select" onChange={(e) => selectHandler("changeDraw", e.target.value)}>
                         <option value="None">그리기</option>
@@ -101,18 +138,15 @@ const ReactMap = () => {
                         <option value="Polygon">면</option>
                     </select>
                 </div>
-                {/* <div ref={Ref}>
-                    <div id="mapbtns">
-                        <button onClick={() => selectHandler("endDraw")}>그리기 종료</button>
-                        <button onClick={() => selectHandler("removeSource", "drawLayer")}>그리기 지우기</button>
-                        <button onClick={() => selectHandler("removeSource", "measureLayer")}>측정 지우기</button>
-                        <button onClick={() => changeZoom()}>center</button>
-                        <button id="osmLayer" onClick={() => changeLayer("osmLayer")}>OSMLayer</button>
-                        <button id="vworldLayer" onClick={() => changeLayer("vworldLayer")}>VWorldLayer</button>
-                        <button onClick={test}>test</button>
-                    </div>
-                </div> */}
-            </div>
+                {tooltip && tooltip.length > 0 ?
+                    tooltip.map((item) => {
+                        return (
+                                <div className="tooltip_box" key={item.id} id={item.id} dangerouslySetInnerHTML={{ __html: item.measure }} />
+                        )
+                    })
+                    : null
+                }
+            </div >
         </>
     )
 
