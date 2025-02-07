@@ -47,23 +47,24 @@ const ReactMap = () => {
 
     useEffect(() => {
         if (tooltip.length === 0) return
-        console.log(tooltip);
-        tooltip.forEach((item) => {
-            const existOverlay = map.getOverlays().getArray().find((overlay) => {
-                return overlay.getElement()?.id === item.id;
-            });
-            if (existOverlay) return;
+        const overlays = map.getOverlays().getArray();
 
+        tooltip.forEach((item) => {
             const element = Ref.current.querySelector(`[id="${item.id}"]`);
             if (!element) return;
-
             const div = new Overlay({
                 element: element,
                 position: item.coordi,
                 className: "tooltip_overlay"
             });
-
-            map.addOverlay(div);
+            const existOverlay = overlays.find((over) => over.getElement()?.id === item.id);
+            if (item.modi) {
+                map.removeOverlay(existOverlay);
+                map.addOverlay(div);
+            } else {
+                if (existOverlay) return;
+                map.addOverlay(div);
+            }
         })
     }, [tooltip])
 
@@ -141,7 +142,7 @@ const ReactMap = () => {
                 {tooltip && tooltip.length > 0 ?
                     tooltip.map((item) => {
                         return (
-                                <div className="tooltip_box" key={item.id} id={item.id} dangerouslySetInnerHTML={{ __html: item.measure }} />
+                            <div className="tooltip_box" key={item.id} id={item.id} dangerouslySetInnerHTML={{ __html: item.measure }} />
                         )
                     })
                     : null
