@@ -5,7 +5,6 @@ import { create } from "zustand"
 
 export const mapStatusStore = (set) => ({
     map: gisMap,
-    // map: gisMap(),
 })
 
 export const useMapStore = create(persist((...a) => ({

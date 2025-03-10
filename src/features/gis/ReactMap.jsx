@@ -6,6 +6,8 @@ import { Feature, Overlay } from "ol";
 
 import "../../assets/css/map.css";
 
+import { CMPopup } from "../../modal/modals/child/ChildPopup"; 
+import { useModalStore } from "../../stores/ModalStore";
 import mapflag from "../../assets/img/mapFlag.png";
 import CircleStyle from "ol/style/Circle";
 import { ScaleLine } from "ol/control";
@@ -16,13 +18,12 @@ import Fill from "ol/style/Fill";
 import Text from "ol/style/Text";
 import Icon from "ol/style/Icon";
 import { Point } from "ol/geom";
-import { useModalStore } from "../../stores/ModalStore";
 
 const ReactMap = () => {
 
     const map = useMapStore(a => a.map);
+    const modalstore = useModalStore(a => a);
 
-    const modalOpen = useModalStore(a => a.setOpen);
     const mapRef = useRef();
     const Ref = useRef();
 
@@ -34,8 +35,6 @@ const ReactMap = () => {
             map.setTarget(mapRef.current);
 
             const mapClick = (e) => {
-                // console.log(e.coordinate);
-                // const layers = getVisibleLayer();
 
                 const feature = map.forEachFeatureAtPixel(e.pixel, function (feature) {
                     return feature
@@ -47,7 +46,7 @@ const ReactMap = () => {
                     switch (feature.get('name')) {
                         case "CM_COORD_Q": // GIS PAGE 24
                             const item = feature.values_.data.item;
-                            console.log('CM_COORD_Q', item);
+                            modalstore.setPopOpen(true, "측량데이터", <CMPopup item={item} />, null);
                             break;
                         default:
                             break;
@@ -164,7 +163,7 @@ const ReactMap = () => {
                             feature.setStyle(style);
                             layer.getSource().addFeature(feature);
                         });
-                        moveCenter(olProj.transform([features[0].tm_x, features[0].tm_y], "EPSG:5187", "EPSG:3857"))
+                        moveCenter(olProj.transform([features[0].tm_x, features[0].tm_y], "EPSG:5187", "EPSG:3857"));
                     });
                 }
                 break
@@ -258,12 +257,3 @@ export default ReactMap;
 
 
 
-const CmCoordiForm = (item) => {
-
-    return (
-        <>
-
-        </>
-    )
-
-}

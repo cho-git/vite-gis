@@ -1,21 +1,17 @@
-import { createJSONStorage, persist } from "zustand/middleware"
-import { gisMap } from "../resources/Map"
+// import { createJSONStorage, persist } from "zustand/middleware"
 import { create } from "zustand"
 
 
-export const modalStatusStore = (set) => ({
-    open: false,
+export const popupStore = (set) => ({
+    PopOpen: false,
     title: null,
-    compo: null,
-    setOpen: (open, title, component) => set({ open: open, title: title, compo, component }),
+    component: null,
+    callBack: null,
+    setPopOpen: (open, title, compo, callBack) => set({ PopOpen: open, title: title, component: compo, callBack: callBack }),
 })
 
-export const useModalStore = create(persist((...a) => ({
-    ...modalStatusStore(...a)
-}),
-    {
-        name: 'map-storage',
-        storage: createJSONStorage(() => sessionStorage),
-    }
-))
+
+export const useModalStore = create((...a) => ({
+    ...popupStore(...a),
+}));
 

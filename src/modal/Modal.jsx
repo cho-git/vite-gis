@@ -1,4 +1,4 @@
-import PopupModal from "./PopupModal"
+import PopupModal from "./modals/PopupModal"
 
 
 
