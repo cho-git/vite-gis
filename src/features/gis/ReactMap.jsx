@@ -1,53 +1,86 @@
 import React, { useEffect, useRef, useState } from "react";
-import { addControlDiv, changeDraw, changeLayer, changeMeasure, endDraw, getAllLayer, getLayer, getSource, moveCenter, ZoomControl } from "../../function/MapFunc";
-import { callApi, elementValueChange, getWishElement } from "../../function/CommonFunc";
+import { addControlDiv, changeDraw, changeLayer, changeMeasure, endDraw, getAllLayer, getLayer, getSource, getVisibleLayer, moveCenter, ZoomControl } from "../../function/MapFunc";
+import { callApi, elementValueChange } from "../../function/CommonFunc";
 import { useMapStore } from "../../stores/MapStore";
-import { Overlay } from "ol";
+import { Feature, Overlay } from "ol";
 
-import "../../assets/css/map.css"
+import "../../assets/css/map.css";
+
+import mapflag from "../../assets/img/mapFlag.png";
+import CircleStyle from "ol/style/Circle";
 import { ScaleLine } from "ol/control";
+import Stroke from "ol/style/Stroke";
+import Style from "ol/style/Style";
+import * as olProj from 'ol/proj';
+import Fill from "ol/style/Fill";
+import Text from "ol/style/Text";
+import Icon from "ol/style/Icon";
+import { Point } from "ol/geom";
+import { useModalStore } from "../../stores/ModalStore";
 
 const ReactMap = () => {
 
     const map = useMapStore(a => a.map);
 
+    const modalOpen = useModalStore(a => a.setOpen);
     const mapRef = useRef();
     const Ref = useRef();
 
     const [tooltip, setToolTip] = useState([]);
 
     useEffect(() => {
-        if (!mapRef.current || !Ref.current) return;
-        if (map.getTarget()) return // 맵 중복생성 방지
-        map.setTarget(mapRef.current);
+        if (mapRef.current) {
+            if (map.getTarget()) return // 맵 중복생성 방지
+            map.setTarget(mapRef.current);
 
-        const mapClick = (e) => {
-            console.log(e.coordinate);
-        };
-        const mapmove = () => {
-            const center = map.getView().getCenter();
-            const minZoom = map.getView().getMinZoom()
-            const currntZoom = map.getView().getZoom();
+            const mapClick = (e) => {
+                // console.log(e.coordinate);
+                // const layers = getVisibleLayer();
 
-            if (currntZoom === minZoom) {
-                alert("center : " + center + "\nzoom : " + currntZoom)
+                const feature = map.forEachFeatureAtPixel(e.pixel, function (feature) {
+                    return feature
+                });
+                if (!feature) {
+                    console.log('singleClick', e.coordinate);
+                } else {
+                    // alert(feature.get('name'));
+                    switch (feature.get('name')) {
+                        case "CM_COORD_Q": // GIS PAGE 24
+                            const item = feature.values_.data.item;
+                            console.log('CM_COORD_Q', item);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            };
+
+            const mapmove = () => {
+                const center = map.getView().getCenter();
+                const minZoom = map.getView().getMinZoom()
+                const currntZoom = map.getView().getZoom();
+
+                if (currntZoom === minZoom) {
+                    alert("center : " + center + "\nzoom : " + currntZoom)
+                }
             }
-        }
-        map.on("click", mapClick); // 맵 클릭시 
-        map.on("moveend", mapmove); // 맵 이동시
+            map.on("click", mapClick); // 맵 클릭시 
+            map.on("moveend", mapmove); // 맵 이동시
 
-        addControlDiv(Ref, '[id="map_btn_div"]'); // 그리기 종료 라인
-        addControlDiv(Ref, '[id="map_sel_div"]'); // 그리기 , 측정 라인
-        addControlDiv(Ref, '[id="map_zoom_div"]'); // + - zoomin,out 라인
-        const scale = new ScaleLine({
-            units: "metric",
-            minWidth: 100,
-        })
-        map.addControl(scale);
-        return () => {
-            map.un("click", mapClick);
-            map.un("moveend", mapmove);
-        };
+            addControlDiv(Ref, '[id="map_btn_div"]'); // 그리기 종료 라인
+            addControlDiv(Ref, '[id="map_sel_div"]'); // 그리기 , 측정 라인
+            addControlDiv(Ref, '[id="map_zoom_div"]'); // + - zoomin,out 라인
+
+            const scale = new ScaleLine({
+                units: "metric",
+                minWidth: 100,
+            })
+            map.addControl(scale);
+            // return () => { //   if (map.getTarget()) 찾기 전 소스
+            //     map.un("click", mapClick);
+            //     map.un("moveend", mapmove);
+            // };
+        }
     }, []);
 
     useEffect(() => {
@@ -91,30 +124,49 @@ const ReactMap = () => {
                 elementValueChange(mapRef, '[id ="draw_select"]', "None");
                 break
             case "thematic":
-                if (type == "None") return
-                // - GIS 22page 주제도-
-                const param = {
-                    "api_name": "CM_COORD_Q",
-                    "fac_cond":
-                    {
-                        "COND": "반경",
-                        "TM_X": 231562.75979870147,
-                        "TM_Y": 329135.32101969444,
-                        "RADIUS": 3000,
-                        "FAC_TYPE": "",
-                        "CONST": "",
-                        "CRET_DATE_FROM": "",
-                        "CRET_DATE_TO": "",
-                        "SV_COMP": ""
-                    }
+                const layer = getLayer("thematic1");
+
+                if (type == "None") {
+                    layer.setVisible(false);
+                } else {
+                    callApi("CM_COORD_Q").then((res) => {
+                        layer.setVisible(true);
+                        const features = res.data;
+
+                        features.map((item) => ({
+                            "item": item,
+                            "coordi": olProj.transform([item.tm_x, item.tm_y], "EPSG:5187", "EPSG:3857"),
+                        })).forEach((data) => {
+                            const feature = new Feature({
+                                id: data.item.id,
+                                name: "CM_COORD_Q",
+                                geometry: new Point(data.coordi),
+                                data: data,
+                            });
+                            const style = new Style({
+                                image: new CircleStyle({
+                                    radius: 7,
+                                    fill: new Fill({ color: '#ffcc33' }),
+                                    stroke: new Stroke({ color: '#ffcc33', width: 2 })
+                                }),
+                                text: new Text({
+                                    text: data.item.fac_type || '',
+                                    font: '12px sans-serif',
+                                    fill: new Fill({ color: '#000' }),
+                                    stroke: new Stroke({ color: '#fff', width: 2 }),
+                                    offsetY: -15
+                                }),
+                                image: new Icon({
+                                    src: mapflag,
+                                    scale: 0.05,
+                                })
+                            });
+                            feature.setStyle(style);
+                            layer.getSource().addFeature(feature);
+                        });
+                        moveCenter(olProj.transform([features[0].tm_x, features[0].tm_y], "EPSG:5187", "EPSG:3857"))
+                    });
                 }
-                const url = "https://mogt.kdgas.co.kr:1301/CMPRO/CM_COORD_Q";
-
-                callApi(url, param).then((data) => {
-                    console.log(data);
-                    debugger
-                });
-
                 break
             default:
                 break
@@ -201,3 +253,17 @@ const ReactMap = () => {
 
 
 export default ReactMap;
+
+
+
+
+
+const CmCoordiForm = (item) => {
+
+    return (
+        <>
+
+        </>
+    )
+
+}

@@ -25,15 +25,15 @@ export const Layers = [
         visible: true,
         // minResolution: 0.25,
     }),
-    
-    // drawLayer
+
+    // drawLayer 그리기
     new VectorLayer({
         id: 'drawLayer',
         source: new VectorSource({ wrapX: false }),
-          visible: true,
+        visible: true,
     }),
 
-    // drawLayer
+    // measureLayer 측정
     new VectorLayer({
         id: 'measureLayer',
         source: new VectorSource({ wrapX: false }),
@@ -43,9 +43,24 @@ export const Layers = [
             'stroke-width': 2,
             'circle-radius': 7,
             'circle-fill-color': '#ffcc33',
-          },
+        },
         visible: true,
+    }),
+
+    new VectorLayer({
+        id: 'thematic1',
+        source: new VectorSource({ wrapX: false }),
+        style: {
+            'fill-color': 'rgba(255, 255, 255, 0.2)',
+            'stroke-color': '#ffcc33',
+            'stroke-width': 100,
+            'circle-radius': 7,
+            'circle-fill-color': '#ffcc33',
+        },
+        visible: false,
     })
+
+
 ]
 
 //fromlonlat :  4326 > 3857

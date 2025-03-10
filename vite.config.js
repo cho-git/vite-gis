@@ -11,6 +11,10 @@ export default defineConfig({
       hmr: false, // HMR 비활성화
     },
   },
+  build: { // 작성 전엔 dist 파일로 생성됐음 
+    outDir: 'build', // 기본값 'dist' → 'build'로 변경
+    emptyOutDir: true, // 기존 빌드 파일 삭제 후 새로 생성
+  },
 })
 
 // logLevel 옵션:

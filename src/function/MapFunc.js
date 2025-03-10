@@ -26,18 +26,24 @@ export function getSource(id) {
     if (!layer) return
     return layer.values_.source
 }
-// Layer id
+// 특정 Layer
 export function getLayer(id) {
     const map = useMapStore.getState().map;
     return map.getLayers().getArray().find((item) => item.values_.id === id) || null;
 }
-export function getAllLayer(ids){
+// N 개의 Layer
+export function getAllLayer(ids) {
     const map = useMapStore.getState().map;
     const layer = []
-    for(let key in ids){
+    for (let key in ids) {
         layer.push(map.getLayers().getArray().find((item) => item.get("id") === ids[key]))
     }
     return layer
+}
+// visible = true 인 Layer
+export function getVisibleLayer(ids) {
+    const map = useMapStore.getState().map;
+    return map.getLayers().getArray().filter((layer) => layer.getVisible() === true)
 }
 
 // <div ref={ref}><button/><select/>....<div> << 추가할 통째
@@ -99,7 +105,7 @@ export function changeMeasure(type, setToolTip) {
     const layer = getLayer("measureLayer");
     if (!source) return
     let sktch;
-    let listener; 
+    let listener;
     let measure;
     let coordi;
 
