@@ -31,6 +31,14 @@ export function getLayer(id) {
     const map = useMapStore.getState().map;
     return map.getLayers().getArray().find((item) => item.values_.id === id) || null;
 }
+export function getAllLayer(ids){
+    const map = useMapStore.getState().map;
+    const layer = []
+    for(let key in ids){
+        layer.push(map.getLayers().getArray().find((item) => item.get("id") === ids[key]))
+    }
+    return layer
+}
 
 // <div ref={ref}><button/><select/>....<div> << 추가할 통째
 export function addControlDiv(ref, type, style) {

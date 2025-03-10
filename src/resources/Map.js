@@ -17,28 +17,7 @@ export const gisMap = new Map({
         maxZoom: 20,
         minZoom: 5,
     }),
+
     layers: Layers,
     target: "",
 })
-
-// export const gisMap = () => {
-
-//     const map = new Map({
-//         controls: defaults({
-//             attribution: true,
-//             // zoom: false,
-//             rotate: false,
-//             scaleLine: false,
-//             attribution: false, //기본 버튼
-//         }),
-//         view: new View({
-//             center: fromLonLat([126.942069, 37.547771]),
-//             zoom: 18,
-//             maxZoom: 21,
-//             minZoom: 5,
-//         }),
-//         layers: Layers,
-//         target: "map",
-//     })
-//     return map;
-// }

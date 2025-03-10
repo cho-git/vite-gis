@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { addControlDiv, changeDraw, changeLayer, changeMeasure, endDraw, getLayer, getSource, moveCenter, ZoomControl } from "../../function/MapFunc";
-import { elementValueChange, getWishElement } from "../../function/CommonFunc";
+import { addControlDiv, changeDraw, changeLayer, changeMeasure, endDraw, getAllLayer, getLayer, getSource, moveCenter, ZoomControl } from "../../function/MapFunc";
+import { callApi, elementValueChange, getWishElement } from "../../function/CommonFunc";
 import { useMapStore } from "../../stores/MapStore";
 import { Overlay } from "ol";
 
 import "../../assets/css/map.css"
+import { ScaleLine } from "ol/control";
 
 const ReactMap = () => {
 
@@ -17,6 +18,7 @@ const ReactMap = () => {
 
     useEffect(() => {
         if (!mapRef.current || !Ref.current) return;
+        if (map.getTarget()) return // 맵 중복생성 방지
         map.setTarget(mapRef.current);
 
         const mapClick = (e) => {
@@ -37,7 +39,11 @@ const ReactMap = () => {
         addControlDiv(Ref, '[id="map_btn_div"]'); // 그리기 종료 라인
         addControlDiv(Ref, '[id="map_sel_div"]'); // 그리기 , 측정 라인
         addControlDiv(Ref, '[id="map_zoom_div"]'); // + - zoomin,out 라인
-
+        const scale = new ScaleLine({
+            units: "metric",
+            minWidth: 100,
+        })
+        map.addControl(scale);
         return () => {
             map.un("click", mapClick);
             map.un("moveend", mapmove);
@@ -57,22 +63,17 @@ const ReactMap = () => {
                 className: "tooltip_overlay"
             });
             const existOverlay = overlays.find((over) => over.getElement()?.id === item.id);
-            // if (item.modi) {
-            // console.log(1)
+
             map.removeOverlay(existOverlay);
             map.addOverlay(div);
-            // } else {
-            // if (existOverlay) return;
-            // console.log(2)
-            // map.addOverlay(div);
-            // }
         })
     }, [tooltip])
 
     const test = () => {
-        const zoomdiv = getWishElement(Ref, '[id="tooltip_box"]');
-
+        console.log(map);
+        debugger
     }
+
 
     const selectHandler = (func, type) => {
         endDraw();
@@ -88,6 +89,32 @@ const ReactMap = () => {
             case "changeMeasure":
                 changeMeasure(type, setToolTip);
                 elementValueChange(mapRef, '[id ="draw_select"]', "None");
+                break
+            case "thematic":
+                if (type == "None") return
+                // - GIS 22page 주제도-
+                const param = {
+                    "api_name": "CM_COORD_Q",
+                    "fac_cond":
+                    {
+                        "COND": "반경",
+                        "TM_X": 231562.75979870147,
+                        "TM_Y": 329135.32101969444,
+                        "RADIUS": 3000,
+                        "FAC_TYPE": "",
+                        "CONST": "",
+                        "CRET_DATE_FROM": "",
+                        "CRET_DATE_TO": "",
+                        "SV_COMP": ""
+                    }
+                }
+                const url = "https://mogt.kdgas.co.kr:1301/CMPRO/CM_COORD_Q";
+
+                callApi(url, param).then((data) => {
+                    console.log(data);
+                    debugger
+                });
+
                 break
             default:
                 break
@@ -107,6 +134,19 @@ const ReactMap = () => {
         elementValueChange(mapRef, '[id ="draw_select"]', "None");
         elementValueChange(mapRef, '[id ="measure_select"]', "None");
     }
+    const remove = () => {
+        const layer = getAllLayer(["measureLayer", "drawLayer"]);
+        for (let key in layer) {
+            layer[key].getSource().clear()
+            if (layer[key].values_.id === "measureLayer") {
+                const overlay = map.getOverlays().getArray().filter((item) => item.element.className === "tooltip_overlay");
+                if (!overlay || overlay.length === 0) return
+                for (let key in overlay) {
+                    map.removeOverlay(overlay[key])
+                }
+            }
+        }
+    }
 
     return (
         <>
@@ -124,6 +164,7 @@ const ReactMap = () => {
                     <button id="moveCenter" onClick={() => moveCenter()}>center</button>
                     <button id="OSMLayer" onClick={() => { changeLayer("osmLayer") }}>OSMLayer</button>
                     <button id="VworldLayer" onClick={() => { changeLayer("vworldLayer") }}>VWorldLayer</button>
+                    <button id="removeBtn" onClick={() => { remove("remove") }}>지우기</button>
                     <button id="TEST" onClick={() => test()}>TEST</button>
                 </div>
 
@@ -138,6 +179,10 @@ const ReactMap = () => {
                         <option value="None">측정</option>
                         <option value="LineString">선</option>
                         <option value="Polygon">면</option>
+                    </select>
+                    <select id="thematic_select" onChange={(e) => selectHandler("thematic", e.target.value)}>
+                        <option value="None">주제도</option>
+                        <option value="thematic1">thematic</option>
                     </select>
                 </div>
                 {tooltip && tooltip.length > 0 ?
