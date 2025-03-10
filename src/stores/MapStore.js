@@ -3,7 +3,7 @@ import { gisMap } from "../resources/Map"
 import { create } from "zustand"
 
 
-export const mapStatusStore = (set) => ({
+export const mapStatusStore = () => ({
     map: gisMap,
 })
 
