@@ -28,7 +28,7 @@
 }
 
 /* ReactMap */
-.map{position: absolute;top: 0; width: 100%; height: 100%;}
+.map{position: absolute;top: 0; width: 100%; height: 100%;margin-top: 3vh;}
 #map_btn_div{position: absolute;left: 10px;top: 40%;display: flex;flex-wrap: nowrap;flex-direction: column;gap: 10px;}
 #map_btn_div button{border: 1px solid #CEC5CC;font-size: 13px;font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;background-color: rgb(70, 109, 234); color: white;border-radius: 8px; border: 1px solid transparent; padding: 0.6em 1em;}
 

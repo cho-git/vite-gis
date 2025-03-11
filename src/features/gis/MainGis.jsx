@@ -69,13 +69,13 @@ const MainGis = () => {
             <div className="main_gis" ref={mapRef} />
             <div ref={Ref}>
                 <div id="mapbtns">
-                    <button onClick={() => selectHandler("endDraw")}>그리기 종료</button>
-                    <button onClick={() => selectHandler("removeSource", "drawLayer")}>그리기 지우기</button>
-                    <button onClick={() => selectHandler("removeSource", "measureLayer")}>측정 지우기</button>
-                    <button onClick={() => changeZoom()}>center</button>
-                    <button id="osmLayer" onClick={() => changeLayer("osmLayer")}>OSMLayer</button>
-                    <button id="vworldLayer" onClick={() => changeLayer("vworldLayer")}>VWorldLayer</button>
-                    <button onClick={test}>test</button>
+                    <button type="button" vonClick={() => selectHandler("endDraw")}>그리기 종료</button>
+                    <button type="button" vonClick={() => selectHandler("removeSource", "drawLayer")}>그리기 지우기</button>
+                    <button type="button" vonClick={() => selectHandler("removeSource", "measureLayer")}>측정 지우기</button>
+                    <button type="button" vonClick={() => changeZoom()}>center</button>
+                    <button type="button" vid="osmLayer" onClick={() => changeLayer("osmLayer")}>OSMLayer</button>
+                    <button type="button" vid="vworldLayer" onClick={() => changeLayer("vworldLayer")}>VWorldLayer</button>
+                    <button type="button" vonClick={test}>test</button>
                 </div>
                 <div id="mapbtns2">
                     <select id="draw_select" onChange={(e) => selectHandler("changeDraw", e.target.value)}>

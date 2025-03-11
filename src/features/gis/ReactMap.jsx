@@ -78,19 +78,20 @@ const ReactMap = () => {
             addControlDiv(Ref, '[id="map_btn_div"]'); // 그리기 종료 라인
             addControlDiv(Ref, '[id="map_sel_div"]'); // 그리기 , 측정 라인
             addControlDiv(Ref, '[id="map_zoom_div"]'); // + - zoomin,out 라인
-            
+
             // map scale
             const scale = new ScaleLine({
                 units: "metric",
                 minWidth: 100,
             })
-            
+
             map.addControl(scale);
-            
+
             return () => { //   if (map.getTarget()) 찾기 전 소스
                 map.un("click", mapClick);
                 map.un("moveend", mapmove);
-                mapRef.current.removeEventListener("keydown", handleKeyDown);
+                if (mapRef.current)
+                    mapRef.current.removeEventListener("keydown", handleKeyDown);
             };
         }
     }, []);
@@ -215,24 +216,31 @@ const ReactMap = () => {
         elementValueChange(mapRef, '[id ="measure_select"]', "None");
     }
 
+    const mapChange = () => {
+        console.log('mapchange')
+    }
     return (
         <>
             <div ref={Ref}>
+                <div className="mapChangeDiv">
+                    <button type="button" onClick={() => { mapChange() }}>학습지도</button>
+                    <button type="button" onClick={() => { mapChange() }}>개발지도</button>
+                </div>
                 <div ref={mapRef} className="map" />
                 <div id="map_zoom_div">
-                    <button id="zoom_in" onClick={() => ZoomControl("in")}>+</button>
-                    <button id="zoom_out" onClick={() => ZoomControl("out")}>-</button>
+                    <button type="button" id="zoom_in" onClick={() => ZoomControl("in")}>+</button>
+                    <button type="button" id="zoom_out" onClick={() => ZoomControl("out")}>-</button>
                 </div>
 
                 <div id="map_btn_div">
-                    <button id="endDraw" onClick={() => { selectHandler("endDraw") }}>그리기 종료</button>
-                    <button id="removeDraw" onClick={() => { removeSource("drawLayer") }}>그리기 지우기</button>
-                    <button id="removeMeasure" onClick={() => { removeSource("measureLayer") }}>측정 지우기</button>
-                    <button id="moveCenter" onClick={() => moveCenter()}>center</button>
-                    <button id="OSMLayer" onClick={() => { changeLayer("osmLayer") }}>OSMLayer</button>
-                    <button id="VworldLayer" onClick={() => { changeLayer("vworldLayer") }}>VWorldLayer</button>
-                    <button id="removeBtn" onClick={() => { remove("remove") }}>지우기</button>
-                    <button id="TEST" onClick={() => test()}>TEST</button>
+                    <button type="button" id="endDraw" onClick={() => { selectHandler("endDraw") }}>그리기 종료</button>
+                    <button type="button" id="removeDraw" onClick={() => { removeSource("drawLayer") }}>그리기 지우기</button>
+                    <button type="button" id="removeMeasure" onClick={() => { removeSource("measureLayer") }}>측정 지우기</button>
+                    <button type="button" id="moveCenter" onClick={() => moveCenter()}>center</button>
+                    <button type="button" id="OSMLayer" onClick={() => { changeLayer("osmLayer") }}>OSMLayer</button>
+                    <button type="button" id="VworldLayer" onClick={() => { changeLayer("vworldLayer") }}>VWorldLayer</button>
+                    <button type="button" id="removeBtn" onClick={() => { remove("remove") }}>지우기</button>
+                    <button type="button" id="TEST" onClick={() => test()}>TEST</button>
                 </div>
 
                 <div id="map_sel_div">

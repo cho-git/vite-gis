@@ -11,7 +11,7 @@ const PopupModal = () => {
                     <div className="popup_content">
                         <h3 className="popup_title">
                             {modalstore.title}
-                            <button onClick={() => modalstore.setPopOpen(false, null, null, null)}>x</button>
+                            <button type="button" onClick={() => modalstore.setPopOpen(false, null, null, null)}>x</button>
                         </h3>
                         {modalstore.component}
                     </div>
