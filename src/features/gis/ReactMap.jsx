@@ -6,7 +6,7 @@ import { Feature, Overlay } from "ol";
 
 import "../../assets/css/map.css";
 
-import { CMPopup } from "../../modal/modals/child/ChildPopup"; 
+import { CMPopup } from "../../modal/modals/child/ChildPopup";
 import { useModalStore } from "../../stores/ModalStore";
 import mapflag from "../../assets/img/mapFlag.png";
 import CircleStyle from "ol/style/Circle";
@@ -35,14 +35,12 @@ const ReactMap = () => {
             map.setTarget(mapRef.current);
 
             const mapClick = (e) => {
-
                 const feature = map.forEachFeatureAtPixel(e.pixel, function (feature) {
                     return feature
                 });
                 if (!feature) {
                     console.log('singleClick', e.coordinate);
                 } else {
-                    // alert(feature.get('name'));
                     switch (feature.get('name')) {
                         case "CM_COORD_Q": // GIS PAGE 24
                             const item = feature.values_.data.item;
@@ -63,22 +61,37 @@ const ReactMap = () => {
                     alert("center : " + center + "\nzoom : " + currntZoom)
                 }
             }
+
+            const handleKeyDown = (e) => { // esc 이벤트
+                if (e.key.toLowerCase() === "escape") {
+                    endDraw();
+                }
+            };
+
+            // map event
             map.on("click", mapClick); // 맵 클릭시 
             map.on("moveend", mapmove); // 맵 이동시
+            mapRef.current.tabIndex = 0; // 키보드 이벤트 감지 위해 필수
+            mapRef.current.addEventListener("keydown", handleKeyDown);
 
+            // map button
             addControlDiv(Ref, '[id="map_btn_div"]'); // 그리기 종료 라인
             addControlDiv(Ref, '[id="map_sel_div"]'); // 그리기 , 측정 라인
             addControlDiv(Ref, '[id="map_zoom_div"]'); // + - zoomin,out 라인
-
+            
+            // map scale
             const scale = new ScaleLine({
                 units: "metric",
                 minWidth: 100,
             })
+            
             map.addControl(scale);
-            // return () => { //   if (map.getTarget()) 찾기 전 소스
-            //     map.un("click", mapClick);
-            //     map.un("moveend", mapmove);
-            // };
+            
+            return () => { //   if (map.getTarget()) 찾기 전 소스
+                map.un("click", mapClick);
+                map.un("moveend", mapmove);
+                mapRef.current.removeEventListener("keydown", handleKeyDown);
+            };
         }
     }, []);
 
@@ -186,6 +199,7 @@ const ReactMap = () => {
         elementValueChange(mapRef, '[id ="measure_select"]', "None");
     }
     const remove = () => {
+        endDraw();
         const layer = getAllLayer(["measureLayer", "drawLayer"]);
         for (let key in layer) {
             layer[key].getSource().clear()
@@ -197,6 +211,8 @@ const ReactMap = () => {
                 }
             }
         }
+        elementValueChange(mapRef, '[id ="draw_select"]', "None");
+        elementValueChange(mapRef, '[id ="measure_select"]', "None");
     }
 
     return (

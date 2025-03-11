@@ -1,3 +1,15 @@
 /* #root{height: 90vh;} */
 #root{height: 100%;}
 #topdiv{height: 90vh;}
+
+
+.popup_content{z-index: 1000; position: absolute; top: 10%; left: 50%; font-weight: bold; background-color: #CEC5CC;border: 1px solid;}
+.popup_title{display: flex;justify-content: center;margin: 0;border-bottom: 1px solid;  height: 3vh;}
+.popup_title button{position:absolute; right : 0;height: 3vh;width: 4vh;border: 0;border-left: 1px solid;}
+
+.CMPopup {padding: 10px;}
+.CMPopup td{text-align: center; border: 1px solid;}
+.CMPopup th{text-align: left; border: 1px solid;}
+
+
+

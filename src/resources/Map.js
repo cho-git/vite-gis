@@ -2,7 +2,7 @@ import { Map, View } from "ol";
 import { defaults, ScaleLine } from "ol/control";
 import { fromLonLat } from "ol/proj";
 import { Layers } from "./MapLayer";
-import proj4 from "proj4";
+import proj4 from 'proj4/dist/proj4';
 import { register } from 'ol/proj/proj4';
 
 

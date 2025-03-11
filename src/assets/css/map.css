@@ -39,14 +39,3 @@
 #map_zoom_div{position: absolute;left: 10px;top: 3%;display: flex;align-items: baseline;gap: 5px;flex-direction: column;}
 #map_zoom_div button{height: 20px; width:20px;padding: 15px; text-align: center;display: flex;align-items: center;justify-content: center;font-weight: 600;}
 .tooltip_box{font-weight: 600;font-size: 18px;background-color: hsla(0,0%,100%,.5);font-family: fantasy;color: black;}
-
-.popup_content{z-index: 1000; position: absolute; top: 10%; left: 50%; font-weight: bold; background-color: #CEC5CC;border: 1px solid;}
-.popup_title{display: flex;justify-content: center;margin: 0;border-bottom: 1px solid; height: 3vh;}
-.popup_title button{position:absolute; right : 0;height: 3vh;width: 4vh;border: none;}
-
-.CMPopup {padding: 10px;}
-.CMPopup td{text-align: center; border: 1px solid;}
-.CMPopup th{text-align: left; border: 1px solid;}
-
-
-
