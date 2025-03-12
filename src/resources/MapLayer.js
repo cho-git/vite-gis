@@ -1,11 +1,9 @@
-import { OSM, XYZ } from "ol/source";
+import { OSM, TileWMS, XYZ } from "ol/source";
 import { config } from "../Config";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 
-
-// layers: [Layers.find((item) => item.values_.id === ${id]})]
 export const Layers = [
     // Open Street Map Layer
     new TileLayer({
@@ -58,10 +56,30 @@ export const Layers = [
             'circle-fill-color': '#ffcc33',
         },
         visible: false,
+    }),
+    new TileLayer({
+        id: "geoserver",
+        source: new TileWMS({
+            url: "http://localhost:9000/geoserver/miraeOracle/wms",
+            params: {
+                SERVICE: "WMS",
+                VERSION: "1.1.1",
+                REQUEST: "GetMap",
+                FORMAT: "image/png",
+                TRANSPARENT: true,
+                STYLES: "",
+                LAYERS: "miraeOracle:gas_gapi_ls",
+                EXCEPTIONS: "application/vnd.ogc.se_inimage",
+                SRS: "EPSG:5186",
+                WIDTH: 711,
+                HEIGHT: 768
+            },
+            serverType: "geoserver",
+        }),
+        visible: false,
     })
-
-
 ]
+
 
 //fromlonlat :  4326 > 3857
 // source: new OSM(), // 레이어의 소스

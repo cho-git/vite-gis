@@ -31,76 +31,89 @@ export function getLayer(id) {
     const map = useMapStore.getState().map;
     return map.getLayers().getArray().find((item) => item.values_.id === id) || null;
 }
-// N 개의 Layer
-export function getAllLayer(ids) {
-    const map = useMapStore.getState().map;
-    const layer = []
-    for (let key in ids) {
-        layer.push(map.getLayers().getArray().find((item) => item.get("id") === ids[key]))
-    }
-    return layer
-}
-// visible = true 인 Layer
-export function getVisibleLayer(ids) {
-    const map = useMapStore.getState().map;
-    return map.getLayers().getArray().filter((layer) => layer.getVisible() === true)
-}
-
-// <div ref={ref}><button/><select/>....<div> << 추가할 통째
-export function addControlDiv(ref, type, style) {
-    const map = useMapStore.getState().map;
-    const element = getWishElement(ref, type);
-    if (!element) return
-
-    const controls = map.getControls().getArray();
-    if (controls?.find((item) => item.element.id === element.id)) return
-
-    const div = new Control({
-        element: element,
-        style: style
-    });
-    map.addControl(div);
-}
-
-// ref , [id,id,id,id,...]
-export function addControl(ref) {
-    const map = useMapStore.getState().map;
-    for (let key in ids) {
-        const item = ref.current.querySelector(`[id=${ids[key]}]`)
-        if (!item) return
-        let control = new Control({
-            element: item
-        })
-        map.addControl(control);
-    }
-}
 // coordi or 대흥역
-export function moveCenter(coordi) {
+export function moveCenter(coordi, zoom) {
     const map = useMapStore.getState().map;
     if (coordi) {
         map.getView().setCenter(coordi);
     } else {
         map.getView().setCenter(fromLonLat([126.942069, 37.547771])); // 대흥역
     }
-    map.getView().setZoom(18);
+    map.getView().setZoom(zoom || 18);
 }
 // type ="Poing , LineString , Polygon"
-export function changeDraw(type) {
+export function changeDraw(type, odd) {
     const map = useMapStore.getState().map;
+    if (type == "None") {
+        return endDraw()
+    }
 
-    const layer = getLayer("measureLayer");
+    const layer = getLayer("drawLayer");
     const source = getSource("drawLayer");
     if (!source) return
+
+
     const draw = new Draw({
         source: source,
         type: type
     })
-    layer.setStyle(style);
+    let newstyle = style;
+    if (odd) {
+        draw.on("drawend", function (e) {
+            const feature = e.feature; // 🔥 새로 그린 feature
+            const length = source.getFeatures().length;
+
+            if (length % 2 === 0) {
+                const oddStyle = [
+                    new Style({
+                        stroke: new Stroke({
+                            color: "red",
+                            width: 5
+                        }),
+                        fill: new Fill({
+                            color: "rgba(255, 0, 0, 0.2)"
+                        })
+                    }),
+                    new Style({
+                        image: new CircleStyle({
+                            radius: 8,
+                            fill: new Fill({
+                                color: "red"
+                            }),
+                            stroke: new Stroke({
+                                color: "red",
+                                width: 4
+                            })
+                        }),
+                        geometry: function (feature) {
+                            const geometry = feature.getGeometry();
+                            if (!geometry) return null;
+
+                            const coordinates = geometry.getCoordinates();
+                            if (geometry.getType() === "Point") {
+                                return new MultiPoint([coordinates]);
+                            } else if (geometry.getType() === "Polygon") {
+                                return new MultiPoint(coordinates[0]);
+                            }
+                        }
+                    })
+                ];
+                feature.setStyle(oddStyle); // 🔥 개별 feature에 스타일 적용
+            }
+        });
+    }
+
+    layer.setStyle(newstyle);
     return map.addInteraction(draw);
 }
 // type ="LineString , Polygon" , setToolTip
 export function changeMeasure(type, setToolTip) {
     const map = useMapStore.getState().map;
+
+    if (type == "None") {
+        return endDraw()
+    }
+
     const source = getSource("measureLayer");
     const layer = getLayer("measureLayer");
     if (!source) return
@@ -246,8 +259,16 @@ const style = [
             })
         }),
         geometry: function (feature) {
-            const coordinates = feature.getGeometry().getCoordinates()[0];
-            return new MultiPoint(coordinates);
+            const geometry = feature.getGeometry();
+            if (!geometry) return null;
+
+            const coordinates = geometry.getCoordinates();
+
+            if (geometry.getType() === "Point") {
+                return new MultiPoint([coordinates]);
+            } else if (geometry.getType() === "Polygon") {
+                return new MultiPoint(coordinates[0]);
+            }
         }
     })
 ];

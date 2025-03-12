@@ -1,10 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { addControlDiv, changeDraw, changeLayer, changeMeasure, endDraw, getAllLayer, getLayer, getSource, getVisibleLayer, moveCenter, ZoomControl } from "../../function/MapFunc";
-import { callApi, elementValueChange } from "../../function/CommonFunc";
+import { changeDraw, changeLayer, changeMeasure, endDraw, getLayer, getSource, moveCenter, ZoomControl } from "../../function/MapFunc";
+import { callApi, elementValueChange, } from "../../function/CommonFunc";
 import { useMapStore } from "../../stores/MapStore";
-import { Feature, Overlay } from "ol";
-
-import "../../assets/css/map.css";
+import { Feature, Overlay, } from "ol";
 
 import { CMPopup } from "../../modal/modals/child/ChildPopup";
 import { useModalStore } from "../../stores/ModalStore";
@@ -19,65 +17,31 @@ import Text from "ol/style/Text";
 import Icon from "ol/style/Icon";
 import { Point } from "ol/geom";
 
+import "../../assets/css/map.css";
+import { useMenuStore } from "../../stores/MenuStore";
+import MainMap from "./MainMap";
+
 const ReactMap = () => {
 
     const map = useMapStore(a => a.map);
     const modalstore = useModalStore(a => a);
+    const menustore = useMenuStore(a => a);
 
-    const mapRef = useRef();
-    const Ref = useRef();
-
+    const ref = useRef();
     const [tooltip, setToolTip] = useState([]);
 
+    const [maptarget, setMapTarget] = useState("map")
+
     useEffect(() => {
-        if (mapRef.current) {
-            if (map.getTarget()) return // 맵 중복생성 방지
-            map.setTarget(mapRef.current);
+        map.setTarget(null);
+        map.setTarget("map");
 
-            const mapClick = (e) => {
-                const feature = map.forEachFeatureAtPixel(e.pixel, function (feature) {
-                    return feature
-                });
-                if (!feature) {
-                    console.log('singleClick', e.coordinate);
-                } else {
-                    switch (feature.get('name')) {
-                        case "CM_COORD_Q": // GIS PAGE 24
-                            const item = feature.values_.data.item;
-                            modalstore.setPopOpen(true, "측량데이터", <CMPopup item={item} />, null);
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            };
-
-            const mapmove = () => {
-                const center = map.getView().getCenter();
-                const minZoom = map.getView().getMinZoom()
-                const currntZoom = map.getView().getZoom();
-
-                if (currntZoom === minZoom) {
-                    alert("center : " + center + "\nzoom : " + currntZoom)
-                }
-            }
-
-            const handleKeyDown = (e) => { // esc 이벤트
-                if (e.key.toLowerCase() === "escape") {
-                    endDraw();
-                }
-            };
-
+        if (ref.current) {
             // map event
             map.on("click", mapClick); // 맵 클릭시 
-            map.on("moveend", mapmove); // 맵 이동시
-            mapRef.current.tabIndex = 0; // 키보드 이벤트 감지 위해 필수
-            mapRef.current.addEventListener("keydown", handleKeyDown);
-
-            // map button
-            addControlDiv(Ref, '[id="map_btn_div"]'); // 그리기 종료 라인
-            addControlDiv(Ref, '[id="map_sel_div"]'); // 그리기 , 측정 라인
-            addControlDiv(Ref, '[id="map_zoom_div"]'); // + - zoomin,out 라인
+            map.on("moveend", (e) => mapmove(e)); // 맵 이동시
+            ref.current.tabIndex = 0; // 키보드 이벤트 감지 위해 필수
+            ref.current.addEventListener("keydown", handleKeyDown);
 
             // map scale
             const scale = new ScaleLine({
@@ -86,14 +50,13 @@ const ReactMap = () => {
             })
 
             map.addControl(scale);
-
-            return () => { //   if (map.getTarget()) 찾기 전 소스
-                map.un("click", mapClick);
-                map.un("moveend", mapmove);
-                if (mapRef.current)
-                    mapRef.current.removeEventListener("keydown", handleKeyDown);
-            };
         }
+        return () => {
+            map.un("click", mapClick);
+            map.un("moveend", mapmove);
+            if (ref.current)
+                ref.current.removeEventListener("keydown", handleKeyDown);
+        };
     }, []);
 
     useEffect(() => {
@@ -101,7 +64,7 @@ const ReactMap = () => {
         const overlays = map.getOverlays().getArray();
 
         tooltip.forEach((item) => {
-            const element = Ref.current.querySelector(`[id="${item.id}"]`);
+            const element = ref.current.querySelector(`[id="${item.id}"]`);
             if (!element) return;
             const div = new Overlay({
                 element: element,
@@ -120,23 +83,64 @@ const ReactMap = () => {
         debugger
     }
 
+    const mapClick = (e) => {
+        const feature = map.forEachFeatureAtPixel(e.pixel, function (feature) {
+            return feature
+        });
+        if (!feature) {
+            console.log('singleClick', e.coordinate);
+        } else {
+            switch (feature.get('name')) {
+                case "CM_COORD_Q": // GIS PAGE 24
+                    const item = feature.values_.data.item;
+                    modalstore.setPopOpen(true, "측량데이터", <CMPopup item={item} />, null);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
+    const mapmove = () => {
+        const center = map.getView().getCenter();
+        const minZoom = map.getView().getMinZoom()
+        const currntZoom = map.getView().getZoom();
+
+        if (currntZoom === minZoom) {
+            alert("center : " + center + "\nzoom : " + currntZoom)
+        }
+    }
+
+    const handleKeyDown = (e) => { // esc 이벤트
+        if (e.key.toLowerCase() === "escape") {
+            endDraw();
+        }
+    };
 
     const selectHandler = (func, type) => {
         endDraw();
         switch (func) {
-            case "endDraw":
-                elementValueChange(mapRef, '[id ="draw_select"]', "None");
-                elementValueChange(mapRef, '[id ="measure_select"]', "None");
+            case "endDraw": // 그리기 종료
+                elementValueChange(ref, '[id ="odd_draw_select"]', "None");
+                elementValueChange(ref, '[id ="draw_select"]', "None");
+                elementValueChange(ref, '[id ="measure_select"]', "None");
                 break
-            case "changeDraw":
+            case "changeDraw": // 그리기 
                 changeDraw(type);
-                elementValueChange(mapRef, '[id ="measure_select"]', "None");
+                elementValueChange(ref, '[id ="odd_draw_select"]', "None");
+                elementValueChange(ref, '[id ="measure_select"]', "None");
                 break
-            case "changeMeasure":
+            case "changeMeasure": // 측정
                 changeMeasure(type, setToolTip);
-                elementValueChange(mapRef, '[id ="draw_select"]', "None");
+                elementValueChange(ref, '[id ="odd_draw_select"]', "None");
+                elementValueChange(ref, '[id ="draw_select"]', "None");
                 break
-            case "thematic":
+            case "oddDraw": // 홀수 그리기
+                changeDraw(type, "odd");
+                elementValueChange(ref, '[id ="draw_select"]', "None");
+                elementValueChange(ref, '[id ="measure_select"]', "None");
+                break
+            case "thematic": // 주제도
                 const layer = getLayer("thematic1");
 
                 if (type == "None") {
@@ -196,78 +200,89 @@ const ReactMap = () => {
                 map.removeOverlay(overlay[key])
             }
         }
-        elementValueChange(mapRef, '[id ="draw_select"]', "None");
-        elementValueChange(mapRef, '[id ="measure_select"]', "None");
+        elementValueChange(ref, '[id ="draw_select"]', "None");
+        elementValueChange(ref, '[id ="measure_select"]', "None");
     }
     const remove = () => {
-        endDraw();
-        const layer = getAllLayer(["measureLayer", "drawLayer"]);
-        for (let key in layer) {
-            layer[key].getSource().clear()
-            if (layer[key].values_.id === "measureLayer") {
-                const overlay = map.getOverlays().getArray().filter((item) => item.element.className === "tooltip_overlay");
-                if (!overlay || overlay.length === 0) return
-                for (let key in overlay) {
-                    map.removeOverlay(overlay[key])
-                }
-            }
-        }
-        elementValueChange(mapRef, '[id ="draw_select"]', "None");
-        elementValueChange(mapRef, '[id ="measure_select"]', "None");
+        removeSource("drawLayer");
+        removeSource("measureLayer");
     }
 
-    const mapChange = () => {
-        console.log('mapchange')
+    const getGeoServerLayer = () => {
+        const layer = map.getLayers().getArray().find((item) => item.values_.id === "geoserver");
+        const visible = layer.getVisible()
+        layer.setVisible(!visible);
+        moveCenter(!visible && [14081451.202739127, 4406399.457892129], !visible && 10);
     }
+
+    const mapChange = (type, menustore) => {
+        setMapTarget(type)
+        if (type === "mainMap") {
+            console.log(menustore);
+            menustore.setPageComponent(MainMap);  // <MainMap /> 대신 MainMap만 전달
+        }
+    };
     return (
         <>
-            <div ref={Ref}>
-                <div className="mapChangeDiv">
-                    <button type="button" onClick={() => { mapChange() }}>학습지도</button>
-                    <button type="button" onClick={() => { mapChange() }}>개발지도</button>
-                </div>
-                <div ref={mapRef} className="map" />
-                <div id="map_zoom_div">
-                    <button type="button" id="zoom_in" onClick={() => ZoomControl("in")}>+</button>
-                    <button type="button" id="zoom_out" onClick={() => ZoomControl("out")}>-</button>
-                </div>
+            <div ref={ref}>
 
-                <div id="map_btn_div">
-                    <button type="button" id="endDraw" onClick={() => { selectHandler("endDraw") }}>그리기 종료</button>
-                    <button type="button" id="removeDraw" onClick={() => { removeSource("drawLayer") }}>그리기 지우기</button>
-                    <button type="button" id="removeMeasure" onClick={() => { removeSource("measureLayer") }}>측정 지우기</button>
-                    <button type="button" id="moveCenter" onClick={() => moveCenter()}>center</button>
-                    <button type="button" id="OSMLayer" onClick={() => { changeLayer("osmLayer") }}>OSMLayer</button>
-                    <button type="button" id="VworldLayer" onClick={() => { changeLayer("vworldLayer") }}>VWorldLayer</button>
-                    <button type="button" id="removeBtn" onClick={() => { remove("remove") }}>지우기</button>
-                    <button type="button" id="TEST" onClick={() => test()}>TEST</button>
-                </div>
+                <div id="map" />
 
-                <div id="map_sel_div">
-                    <select id="draw_select" onChange={(e) => selectHandler("changeDraw", e.target.value)}>
-                        <option value="None">그리기</option>
-                        <option value="Point">점</option>
-                        <option value="LineString">선</option>
-                        <option value="Polygon">면</option>
-                    </select>
-                    <select id="measure_select" onChange={(e) => selectHandler("changeMeasure", e.target.value)}>
-                        <option value="None">측정</option>
-                        <option value="LineString">선</option>
-                        <option value="Polygon">면</option>
-                    </select>
-                    <select id="thematic_select" onChange={(e) => selectHandler("thematic", e.target.value)}>
-                        <option value="None">주제도</option>
-                        <option value="thematic1">thematic</option>
-                    </select>
+                <div id="mapChangeDiv">
+                    <button type="button" onClick={() => { mapChange("map") }}>학습지도</button>
+                    <button type="button" onClick={() => { mapChange("mainMap") }}>개발지도</button>
                 </div>
-                {tooltip && tooltip.length > 0 ?
-                    tooltip.map((item) => {
-                        return (
-                            <div className="tooltip_box" key={item.id} id={item.id} dangerouslySetInnerHTML={{ __html: item.measure }} />
-                        )
-                    })
-                    : null
-                }
+                <div id="map_control_div">
+                    <div id="map_zoom_div">
+                        <button type="button" id="zoom_in" onClick={() => ZoomControl("in")}>+</button>
+                        <button type="button" id="zoom_out" onClick={() => ZoomControl("out")}>-</button>
+                    </div>
+
+                    <div id="map_btn_div">
+                        <button type="button" id="endDraw" onClick={() => { getGeoServerLayer() }}>지오서버</button>
+                        <button type="button" id="endDraw" onClick={() => { selectHandler("endDraw") }}>그리기 종료</button>
+                        <button type="button" id="removeDraw" onClick={() => { removeSource("drawLayer") }}>그리기 지우기</button>
+                        <button type="button" id="removeMeasure" onClick={() => { removeSource("measureLayer") }}>측정 지우기</button>
+                        <button type="button" id="moveCenter" onClick={() => moveCenter()}>center</button>
+                        <button type="button" id="OSMLayer" onClick={() => { changeLayer("osmLayer") }}>OSMLayer</button>
+                        <button type="button" id="VworldLayer" onClick={() => { changeLayer("vworldLayer") }}>VWorldLayer</button>
+                        <button type="button" id="removeBtn" onClick={() => { remove("remove") }}>지우기</button>
+                        <button type="button" id="TEST" onClick={() => test()}>debugger</button>
+                    </div>
+
+                    <div id="map_sel_div">
+                        <select id="odd_draw_select" onChange={(e) => selectHandler("oddDraw", e.target.value)}>
+                            <option value="None">홀수 그리기</option>
+                            <option value="Point">점</option>
+                            <option value="LineString">선</option>
+                            <option value="Polygon">면</option>
+                        </select>
+
+                        <select id="draw_select" onChange={(e) => selectHandler("changeDraw", e.target.value)}>
+                            <option value="None">그리기</option>
+                            <option value="Point">점</option>
+                            <option value="LineString">선</option>
+                            <option value="Polygon">면</option>
+                        </select>
+                        <select id="measure_select" onChange={(e) => selectHandler("changeMeasure", e.target.value)}>
+                            <option value="None">측정</option>
+                            <option value="LineString">선</option>
+                            <option value="Polygon">면</option>
+                        </select>
+                        <select id="thematic_select" onChange={(e) => selectHandler("thematic", e.target.value)}>
+                            <option value="None">주제도</option>
+                            <option value="thematic1">thematic</option>
+                        </select>
+                    </div>
+                    {tooltip && tooltip.length > 0 ?
+                        tooltip.map((item) => {
+                            return (
+                                <div className="tooltip_box" key={item.id} id={item.id} dangerouslySetInnerHTML={{ __html: item.measure }} />
+                            )
+                        })
+                        : null
+                    }
+                </div>
             </div >
         </>
     )
