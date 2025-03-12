@@ -28,8 +28,6 @@ const ReactMap = () => {
     const ref = useRef();
     const [tooltip, setToolTip] = useState([]);
 
-    const [maptarget, setMapTarget] = useState("map")
-
     useEffect(() => {
         map.setTarget(null);
         map.setTarget("map");
@@ -212,24 +210,14 @@ const ReactMap = () => {
         layer.setVisible(!visible);
         moveCenter(!visible && [14081451.202739127, 4406399.457892129], !visible && 10);
     }
-
-    const mapChange = (type, menustore) => {
-        setMapTarget(type)
-        if (type === "mainMap") {
-            console.log(menustore);
-            menustore.setPageComponent(MainMap);  // <MainMap /> 대신 MainMap만 전달
-        }
-    };
+   
     return (
         <>
             <div ref={ref}>
 
                 <div id="map" />
 
-                <div id="mapChangeDiv">
-                    <button type="button" onClick={() => { mapChange("map") }}>학습지도</button>
-                    <button type="button" onClick={() => { mapChange("mainMap") }}>개발지도</button>
-                </div>
+                
                 <div id="map_control_div">
                     <div id="map_zoom_div">
                         <button type="button" id="zoom_in" onClick={() => ZoomControl("in")}>+</button>

@@ -2,8 +2,7 @@
 import React, { Suspense } from "react";
 import "./assets/css/base.css"
 
-
-const ReactMap = React.lazy(() => import("./features/gis/ReactMap"));
+const MainPage = React.lazy(() => import('./pages/MainPage'));
 const Modal = React.lazy(() => import("./modal/Modal"));
 
 const App = () => {
@@ -11,7 +10,7 @@ const App = () => {
     <div>
       <Suspense fallback={<div>Loading...</div>}>
         <Modal />
-        <ReactMap />
+        <MainPage />
       </Suspense>
     </div>
   );

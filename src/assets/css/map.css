@@ -44,5 +44,5 @@
 #mainMap{position: absolute;top: 0; width: 100%; height: 100vh;}
 #mainMap_control_div{display: none;}
 
-#mapChangeDiv{position: absolute;left: 10px;top: 3%;display: flex;align-items: baseline;gap: 10px;}
+#mapChangeDiv{z-index: 1000; position: absolute;left: 10px;top: 3%;display: flex;align-items: baseline;gap: 10px;}
 #mapChangeDiv button{border-radius: 8px;height:30px;width: 100%;min-width: 90px; border: 1px solid #CEC5CC;font-size: 13px;text-align: center; background-color: rgb(70, 109, 234); color: white;appearance:none;}

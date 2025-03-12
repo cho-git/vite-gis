@@ -21,48 +21,7 @@ const MainMap = () => {
     useEffect(() => {
         map.setTarget(null);
         map.setTarget("mainMap");
-
-        if (ref.current) {
-            // map event
-            map.on("click", mapClick); // 맵 클릭시 
-            map.on("moveend", (e) => mapmove(e)); // 맵 이동시
-            ref.current.tabIndex = 0; // 키보드 이벤트 감지 위해 필수
-            ref.current.addEventListener("keydown", handleKeyDown);
-
-            // map scale
-            const scale = new ScaleLine({
-                units: "metric",
-                minWidth: 100,
-            })
-
-            map.addControl(scale);
-        }
-        return () => {
-            map.un("click", mapClick);
-            map.un("moveend", mapmove);
-            if (ref.current)
-                ref.current.removeEventListener("keydown", handleKeyDown);
-        };
     }, []);
-
-    useEffect(() => {
-        if (tooltip.length === 0) return
-        const overlays = map.getOverlays().getArray();
-
-        tooltip.forEach((item) => {
-            const element = ref.current.querySelector(`[id="${item.id}"]`);
-            if (!element) return;
-            const div = new Overlay({
-                element: element,
-                position: item.coordi,
-                className: "tooltip_overlay"
-            });
-            const existOverlay = overlays.find((over) => over.getElement()?.id === item.id);
-
-            map.removeOverlay(existOverlay);
-            map.addOverlay(div);
-        })
-    }, [tooltip])
 
     const test = () => {
         console.log(map);
@@ -103,20 +62,12 @@ const MainMap = () => {
         }
     };
 
-    const mapChange = (type) => {
-        map.setTarget(type);
-    }
     return (
         <>
             <div ref={ref}>
                 testtest
                 <div id="mainMap" />
-
-                <div id="mapChangeDiv">
-                    <button type="button" onClick={() => { mapChange("map") }}>학습지도</button>
-                    <button type="button" onClick={() => { mapChange("mainMap") }}>개발지도</button>
-                </div>
-
+                
                 <div id="map_control_div">
                     <div id="map_zoom_div">
                         <button type="button" id="zoom_in" onClick={() => ZoomControl("in")}>+</button>
@@ -124,7 +75,6 @@ const MainMap = () => {
                     </div>
                 </div>
             </div >
-            개발지도 : 개발지도 component
         </>
     )
 
