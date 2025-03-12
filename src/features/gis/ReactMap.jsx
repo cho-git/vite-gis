@@ -18,14 +18,12 @@ import Icon from "ol/style/Icon";
 import { Point } from "ol/geom";
 
 import "../../assets/css/map.css";
-import { useMenuStore } from "../../stores/MenuStore";
 import MainMap from "./MainMap";
 
 const ReactMap = () => {
 
     const map = useMapStore(a => a.map);
     const modalstore = useModalStore(a => a);
-    const menustore = useMenuStore(a => a);
 
     const ref = useRef();
     const [tooltip, setToolTip] = useState([]);
