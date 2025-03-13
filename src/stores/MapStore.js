@@ -3,8 +3,9 @@ import { gisMap } from "../resources/Map"
 import { create } from "zustand"
 
 
-export const mapStatusStore = () => ({
+export const mapStatusStore = (set) => ({
     map: gisMap,
+    // setMap: (mapInstance) => set({ map: mapInstance }),
 })
 
 export const useMapStore = create(persist((...a) => ({

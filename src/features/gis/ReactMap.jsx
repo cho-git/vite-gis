@@ -6,7 +6,7 @@ import { Feature, Overlay, } from "ol";
 
 import { CMPopup } from "../../modal/modals/child/ChildPopup";
 import { useModalStore } from "../../stores/ModalStore";
-import mapflag from "../../assets/img/mapFlag.png";
+import mapflag from "../../assets/img/map/mapflag.png";
 import CircleStyle from "ol/style/Circle";
 import { ScaleLine } from "ol/control";
 import Stroke from "ol/style/Stroke";
@@ -31,6 +31,7 @@ const ReactMap = () => {
     useEffect(() => {
         map.setTarget(null);
         map.setTarget("map");
+
 
         if (ref.current) {
             // map event
@@ -214,10 +215,7 @@ const ReactMap = () => {
     return (
         <>
             <div ref={ref}>
-
                 <div id="map" />
-
-                
                 <div id="map_control_div">
                     <div id="map_zoom_div">
                         <button type="button" id="zoom_in" onClick={() => ZoomControl("in")}>+</button>
