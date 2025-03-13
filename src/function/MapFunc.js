@@ -12,6 +12,9 @@ import { Control } from "ol/control";
 import { fromLonLat } from "ol/proj";
 import Style from "ol/style/Style";
 import Fill from "ol/style/Fill";
+import TileLayer from "ol/layer/Tile";
+import { XYZ } from "ol/source";
+import { config } from "../Config";
 
 //////////////////////////////////////////////////////////////////
 //////////////////////////ReactMap////////////////////////////////
@@ -39,7 +42,7 @@ export function moveCenter(coordi, zoom) {
     } else {
         map.getView().setCenter(fromLonLat([126.942069, 37.547771])); // 대흥역
     }
-    map.getView().setZoom(zoom || 18);
+    map.getView().setZoom(zoom || 10);
 }
 // type ="Poing , LineString , Polygon"
 export function changeDraw(type, odd) {
@@ -231,12 +234,11 @@ export function changeLayer(id) {
     const map = useMapStore.getState().map;
     const layers = map.getLayers().getArray();
     for (let key in layers) {
-        if (layers[key].values_.id === "vectorLayer" || layers[key].values_.id === "measureLayer") return
-        layers[key].setVisible(layers[key].values_.id === id);
+        if (layers[key] instanceof TileLayer) {
+            layers[key].setVisible(layers[key].values_.id === id);
+        }
     }
 }
-
-
 const style = [
     new Style({
         stroke: new Stroke({

@@ -60,7 +60,9 @@
 
 #normal_map::before{background-image: url(../img/map/normal_map.png);}
 #sate_map::before{background-image: url(../img/map/sate_map.png);}
-#geo_map::before{background-image: url(../img/map/normal_map.png);}
+#hybrid_map::before{background-image: url(../img/map/hybrid_map.png);}
+#white_map::before{background-image: url(../img/map/white_map.png);}
+#midnight_map::before{background-image: url(../img/map/midnight_map.png);}
 
 .logo_box{display: flex;flex: 0 0 auto; -webkit-box-pack: center;justify-content: center; -webkit-box-align: center;align-items: center;height: 50px; border-bottom: 1px solid rgba(0, 0, 0, 0.15);box-sizing: border-box;}
 .log_img{width: 100%;}

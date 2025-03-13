@@ -77,7 +77,47 @@ export const Layers = [
             serverType: "geoserver",
         }),
         visible: false,
-    })
+    }),
+
+    new TileLayer({
+        id: "Satellite",
+        source: new XYZ({
+            url: `https://api.vworld.kr/req/wmts/1.0.0/${config.vworldKey}/Satellite/{z}/{y}/{x}.jpeg`,
+            crossOrigin: "anonymous",
+            attributionsCollapsible: false,
+        }),
+        visible: false,
+    }),
+    // Hybrid Layer
+    new TileLayer({
+        id: 'Hybrid',
+        source: new XYZ({
+            url: `https://api.vworld.kr/req/wmts/1.0.0/${config.vworldKey}/Hybrid/{z}/{y}/{x}.png`,
+            crossOrigin: 'anonymous',
+            attributionsCollapsible: false,
+        }),
+        visible: false,
+    }),
+    // White Layer
+    new TileLayer({
+        id: 'White',
+        source: new XYZ({
+            url: `https://api.vworld.kr/req/wmts/1.0.0/${config.vworldKey}/white/{z}/{y}/{x}.png`,
+            crossOrigin: 'anonymous',
+            attributionsCollapsible: false,
+        }),
+        visible: false,
+    }),
+    // White Layer
+    new TileLayer({
+        id: 'Midnight',
+        source: new XYZ({
+            url: `https://api.vworld.kr/req/wmts/1.0.0/${config.vworldKey}/midnight/{z}/{y}/{x}.png`,
+            crossOrigin: 'anonymous',
+            attributionsCollapsible: false,
+        }),
+        visible: false,
+    }),
 ]
 
 

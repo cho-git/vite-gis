@@ -22,7 +22,7 @@ export const gisMap = new Map({
     view: new View({
         projection: 'EPSG:3857',
         center: fromLonLat([126.942069, 37.547771]),
-        zoom: 18,
+        zoom: 10,
         maxZoom: 20,
         minZoom: 5,
     }),
