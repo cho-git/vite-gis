@@ -8,6 +8,7 @@ import { CMPopup } from "../../modal/modals/child/ChildPopup";
 import { useModalStore } from "../../stores/ModalStore";
 import MainMapLayerCart from "../../commponent/MainMapLayerCart";
 import MainMapBar from "../../commponent/MainMapBar";
+import MainMapToolBox from "../../commponent/MainMapToolBox";
 
 const MainMap = () => {
 
@@ -27,6 +28,7 @@ const MainMap = () => {
                 <div id="mainMap" />
                 <MainMapBar /> 
                 <MainMapLayerCart />
+                <MainMapToolBox/>
             </div >
         </>
     )
