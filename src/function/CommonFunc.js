@@ -1,18 +1,4 @@
-// ref , '[id=id]'
-export function getWishElement(ref, type) {
-    return ref.current.querySelector(type);
-}
-
-// ref , '[id=id]' , value
-export function elementValueChange(ref, type, value) {
-    const element = getWishElement(ref, type);
-    if (element) {
-        element.value = value;
-    }
-}
-
-
-
+// api 호출
 export async function callApi(name) {
     return fetch(cmurl(name), {
         method: "POST",
@@ -27,6 +13,19 @@ export async function callApi(name) {
             throw new Error('err');
         }
     }).catch((err) => console.error('callapi err', err));
+}
+
+// ref , '[id=id]'
+export function getWishElement(ref, type) {
+    return ref.current.querySelector(type);
+}
+
+// ref , '[id=id]' , value
+export function elementValueChange(ref, type, value) {
+    const element = getWishElement(ref, type);
+    if (element) {
+        element.value = value;
+    }
 }
 
 const cmurl = (name) =>{

@@ -178,7 +178,7 @@ const ReactMap = () => {
                             feature.setStyle(style);
                             layer.getSource().addFeature(feature);
                         });
-                        moveCenter(olProj.transform([features[0].tm_x, features[0].tm_y], "EPSG:5187", "EPSG:3857"));
+                        moveCenter(olProj.transform([features[0].tm_x, features[0].tm_y], "EPSG:5187", "EPSG:3857") ,18);
                     });
                 }
                 break

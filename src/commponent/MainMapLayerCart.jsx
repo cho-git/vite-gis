@@ -1,14 +1,15 @@
-// LayerCart.js
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useMapStore } from '../stores/MapStore';
-import { changeLayer, getLayer } from '../function/MapFunc';
+import { changeLayer } from '../function/MapFunc';
+import { activeLable } from '../function/CompoFunc';
 
 const MainMapLayerCart = () => {
-    const map = useMapStore(a => a.map);
-    const test = () => {
-        console.log(map);
-        debugger
-    }
+    // const map = useMapStore(a => a.map);
+
+    useEffect(()=>{
+        activeLable()
+    },[])
+
     return (
         <>
             <div id="mainmap_layer_cart">
@@ -38,11 +39,6 @@ const MainMapLayerCart = () => {
                             <span className="cart_label">야간지도</span>
                         </button>
                     </div>
-                    {/* <div className="cart_item" onClick={() => { test() }}>
-                        <button type="button" className="cart_btn" id="geo_map">
-                            <span className="cart_label">debugger</span>
-                        </button>
-                    </div> */}
                 </div>
             </div>
         </>

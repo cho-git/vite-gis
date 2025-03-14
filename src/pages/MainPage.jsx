@@ -1,7 +1,7 @@
 import { useState } from "react";
 import MainMap from "../features/gis/MainMap";
 import ReactMap from "../features/gis/ReactMap";
-import { endDraw, moveCenter } from "../function/MapFunc";
+import { changeLayer, endDraw, moveCenter } from "../function/MapFunc";
 import { useMapStore } from "../stores/MapStore";
 import { gisMap } from "../resources/Map";
 
@@ -34,6 +34,7 @@ const MainPage = () => {
                 map.removeOverlay(overlay[key])
             }
         }
+        changeLayer("vworldLayer");
         endDraw();
         moveCenter();
         setMapConfig((pre) => ({
