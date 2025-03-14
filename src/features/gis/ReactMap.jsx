@@ -145,6 +145,7 @@ const ReactMap = () => {
                 } else {
                     callApi("CM_COORD_Q").then((res) => {
                         layer.setVisible(true);
+                        if(!res) return
                         const features = res.data;
 
                         features.map((item) => ({

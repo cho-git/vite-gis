@@ -74,3 +74,7 @@
 #midnight_map::before{background-image: url(../img/map/midnight_map.png);}
 
 /*toolbox */
+#mainmap_toolbox{position: absolute;right: 15px;top: 87px;}
+.toolbox_wrap{display: inline-block;background: rgb(255, 255, 255);border: 1px solid rgba(0, 0, 0, 0.2);border-radius: 4px;box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px;}
+.tool_theme{overflow: hidden;display: inline-block;font-size: 1px;line-height: 1px;color: transparent;vertical-align: top;width: 42px;height: 43px;mask-image: none;}
+.blind{overflow: hidden !important; position: absolute !important;width: 1px !important;height: 1px !important;margin: -1px !important;color: transparent !important;clip: rect(0px, 0px, 0px, 0px) !important;}
