@@ -118,6 +118,18 @@ export const Layers = [
         }),
         visible: false,
     }),
+    new VectorLayer({
+        id: 'themetic2',
+        source: new VectorSource({ wrapX: false }),
+        style: {
+            'fill-color': 'rgba(255, 255, 255, 0.2)',
+            'stroke-color': '#ffcc33',
+            'stroke-width': 100,
+            'circle-radius': 7,
+            'circle-fill-color': '#ffcc33',
+        },
+        visible: false,
+    }),
 ]
 
 

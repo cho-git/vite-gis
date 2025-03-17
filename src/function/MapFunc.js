@@ -1,4 +1,4 @@
-import { LineString, MultiPoint, Polygon } from "ol/geom";
+import { Circle, LineString, MultiPoint, Polygon } from "ol/geom";
 import { getArea, getLength } from 'ol/sphere.js';
 import { useMapStore } from "../stores/MapStore";
 import { getWishElement } from "./CommonFunc";
@@ -62,46 +62,33 @@ export function changeDraw(type, odd) {
     })
     let newstyle = style;
     if (odd) {
+        draw.on("drawstart", function (e) {
+            console.log('11');
+        })
         draw.on("drawend", function (e) {
-            const feature = e.feature; // 🔥 새로 그린 feature
+            draw.on("dbclick",function(e){
+                console.log('drawabort1');
+            })
+            draw.on("change:active",function(e){
+                console.log('drawabort2');
+            })
+            draw.on("drawabort",function(e){
+                console.log('drawabort3');
+            })
+            debugger
+            const feature = e.feature;
             const length = source.getFeatures().length;
-
             if (length % 2 === 0) {
-                const oddStyle = [
-                    new Style({
-                        stroke: new Stroke({
-                            color: "red",
-                            width: 5
-                        }),
-                        fill: new Fill({
-                            color: "rgba(255, 0, 0, 0.2)"
-                        })
+                const oddStyle = new Style({
+                    stroke: new Stroke({
+                        color: "red",
+                        width: 5
                     }),
-                    new Style({
-                        image: new CircleStyle({
-                            radius: 8,
-                            fill: new Fill({
-                                color: "red"
-                            }),
-                            stroke: new Stroke({
-                                color: "red",
-                                width: 4
-                            })
-                        }),
-                        geometry: function (feature) {
-                            const geometry = feature.getGeometry();
-                            if (!geometry) return null;
-
-                            const coordinates = geometry.getCoordinates();
-                            if (geometry.getType() === "Point") {
-                                return new MultiPoint([coordinates]);
-                            } else if (geometry.getType() === "Polygon") {
-                                return new MultiPoint(coordinates[0]);
-                            }
-                        }
+                    fill: new Fill({
+                        color: "rgba(255, 0, 0, 0.2)"
                     })
-                ];
-                feature.setStyle(oddStyle); // 🔥 개별 feature에 스타일 적용
+                })
+                feature.setStyle(oddStyle);
             }
         });
     }
@@ -109,8 +96,8 @@ export function changeDraw(type, odd) {
     layer.setStyle(newstyle);
     return map.addInteraction(draw);
 }
-// type ="LineString , Polygon" , setToolTip
-export function changeMeasure(type, setToolTip) {
+// type ="LineString , Polygon" , setState , callBack
+export function changeMeasure(type, setItem, callBack) {
     const map = useMapStore.getState().map;
 
     if (type == "None") {
@@ -141,7 +128,11 @@ export function changeMeasure(type, setToolTip) {
 
             } else if (geom instanceof LineString) {
                 measure = formatLength(geom);
+            } else if (geom instanceof Circle) {
+                const radius = geom.getRadius();
+                measure = Math.PI * Math.pow(radius, 2);
             }
+
         });
     });
 
@@ -150,42 +141,57 @@ export function changeMeasure(type, setToolTip) {
         unByKey(listener);
         const geometry = evt.feature.getGeometry()
         if (geometry instanceof LineString) {
-            coordi = evt.feature.getGeometry().getLastCoordinate()
+            coordi = evt.feature.getGeometry().getLastCoordinate();
         } else if (geometry instanceof Polygon) {
             coordi = getCenter(geometry.getExtent());
+        } else if (geometry instanceof Circle) {
+            coordi = evt.feature.getGeometry().getFirstCoordinate();
         }
-        return setToolTip((pre) => [
-            ...pre,
-            {
-                id: evt.feature.ol_uid, // ID
-                measure: measure, // 계산된 값
-                coordi: coordi,// 마지막 지점
+
+        if (setItem) {
+            return setItem((pre) => [
+                ...pre,
+                {
+                    id: evt.feature.ol_uid, // ID
+                    measure: measure, // 계산된 값
+                    coordi: coordi,// 마지막 지점
+                    modi: false,
+                }
+            ]);
+        }
+        if (callBack) {
+            const item = {
+                id: evt.feature.ol_uid,
+                measure: measure,
+                coordi: coordi,
                 modi: false,
             }
-        ]);
+            callBack(item);
+        }
     })
     modi.on('modifyend', function (evt) {
         sktch = evt.features;
+        if (setItem) {
+            setItem((pre) => {
+                return pre.map((item) => {
+                    const feature = evt.features.getArray().find(f => f.ol_uid === item.id);
+                    if (!feature) return item;
 
-        setToolTip((pre) => {
-            return pre.map((item) => {
-                const feature = evt.features.getArray().find(f => f.ol_uid === item.id);
-                if (!feature) return item;
+                    const geometry = feature.getGeometry();
+                    let measure, coordi;
 
-                const geometry = feature.getGeometry();
-                let measure, coordi;
+                    if (geometry instanceof LineString) {
+                        measure = (getLength(geometry) / 1000).toFixed(2) + " km";
+                        coordi = geometry.getLastCoordinate();
+                    } else if (geometry instanceof Polygon) {
+                        measure = getArea(geometry).toFixed(2) + " m²";
+                        coordi = getCenter(geometry.getExtent());
+                    }
 
-                if (geometry instanceof LineString) {
-                    measure = (getLength(geometry) / 1000).toFixed(2) + " km";
-                    coordi = geometry.getLastCoordinate();
-                } else if (geometry instanceof Polygon) {
-                    measure = getArea(geometry).toFixed(2) + " m²";
-                    coordi = getCenter(geometry.getExtent());
-                }
-
-                return { ...item, measure: measure, coordi: coordi, modi: true };
+                    return { ...item, measure: measure, coordi: coordi, modi: true };
+                });
             });
-        });
+        }
     });
     const formatLength = function (line) {
         const length = getLength(line);
@@ -274,3 +280,25 @@ const style = [
         }
     })
 ];
+
+
+export const calculateBBox = (coordi, radius) => {
+    // 중심 좌표 (경도, 위도)
+    const [lon, lat] = coordi;
+
+    // 반지름을 좌표 단위로 변환 (예: 미터 -> 경도, 위도)
+    const latToMeter = 111320; // 위도 1도에 대한 미터 값 (대략적인 값)
+    const lonToMeter = 111320; // 경도 1도에 대한 미터 값 (대략적인 값)
+
+    // 경도, 위도에 대한 미터 단위로 반지름을 변환
+    const latRadius = radius / latToMeter; // 위도 반지름
+    const lonRadius = radius / lonToMeter; // 경도 반지름
+
+    // Bounding Box 계산
+    const maxLat = lat + latRadius;
+    const minLat = lat - latRadius;
+    const maxLon = lon + lonRadius;
+    const minLon = lon - lonRadius;
+
+    return { maxLat, minLat, maxLon, minLon };
+};

@@ -1,3 +1,4 @@
+// 측량
 export const CMPopup = ({ item }) => {
 
 
@@ -35,8 +36,36 @@ export const CMPopup = ({ item }) => {
                         <td></td>
                     </tr>
                 </tbody>
+            </table>
+        </div>
+    )
+}
+
+// VWORLD CCTV
+export const CCTVPopup = ({ item }) => {
 
 
+    return (
+        <div className="CMPopup">
+            <table >
+                <colgroup>
+                    <col width="30%" />
+                    <col width="70%" />
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <th>CCTV ID</th>
+                        <td>{item.id}</td>
+                    </tr>
+                    <tr>
+                        <th>CCTV 위치</th>
+                        <td>{item.properties.locate}</td>
+                    </tr>
+                    <tr>
+                        <th>CCTV 명</th>
+                        <td>{item.properties.cctvname}</td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     )

@@ -1,5 +1,6 @@
 import jsonp from "jsonp";
 import { config } from "../Config";
+
 // api 호출
 export async function callApi(name) {
     return fetch(cmurl(name), {
@@ -18,19 +19,22 @@ export async function callApi(name) {
 }
 
 // vworld api
-export function callVworld(name, callBack) {
+export function callVworld(name, callBack, { param }) {
     return new Promise((resolve, reject) => {
         const url = "https://api.vworld.kr/req/data?";
         const params = new URLSearchParams(cmparam(name));
-
+        if (param) {
+            Object.entries(param).forEach(([key, value]) => {
+                params.append(key, value); // params에 추가
+            });
+        }
         jsonp(url + params.toString(), null, (err, apidata) => {
             if (apidata?.response?.status === "OK") {
                 const item = apidata.response.result.featureCollection.features;
                 if (callBack) callBack(item);
                 else { resolve(item); }
-
-            } else {
-                reject(new Error("vworld API 응답 오류"));
+            } else if (apidata?.response?.status === "NOT_FOUND") {
+                callBack([])
             }
         });
     });
@@ -82,9 +86,10 @@ const cmparam = (name) => {
             "VERSION": "2.0", // 기본값
             "request": "GetFeature", // GetFeature 또는 GetFeatureType
             "FORMAT": "json", // json 또는 xml
-            "SIZE": "100", // 데이터 크기 (기본값 10, 최대값 1000)
-            "PAGE": 1, // 페이지 번호
-            "geomfilter": "BOX(14151285.172636375,4300114.2789779045,14190377.120627083,4339206.2269686125)", // 좌표 (예: 서울 시청)
+            "SIZE": "1000", // 데이터 크기 (기본값 10, 최대값 1000)
+            "PAGE": 10, // 페이지 번호
+            // "geomfilter": "BOX(14151285.172636375,4300114.2789779045,14190377.120627083,4339206.2269686125)", // 좌표 (예: 서울 시청)
+            // "attrFilter":"locate:like:서울특별시 성동구청",
             "COLUMNS": "locate,cctvname,ag_geom", // 출력할 컬럼들 (소재지, CCTV명, 좌표 정보)
             "CRS": "EPSG:3857",
             "ERRORFORMAT": "json",

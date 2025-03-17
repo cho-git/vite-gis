@@ -84,6 +84,8 @@ const ReactMap = () => {
         const feature = map.forEachFeatureAtPixel(e.pixel, function (feature) {
             return feature
         });
+        console.log(e)
+        // debugger
         if (!feature) {
             console.log('singleClick', e.coordinate);
         } else {
@@ -158,6 +160,7 @@ const ReactMap = () => {
                                 geometry: new Point(data.coordi),
                                 data: data,
                             });
+                            console.log(feature.getProperties());
                             const style = new Style({
                                 image: new CircleStyle({
                                     radius: 7,

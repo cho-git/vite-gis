@@ -4,7 +4,7 @@ import { useMapStore } from "../../stores/MapStore";
 
 import "../../assets/css/map.css";
 
-import { CMPopup } from "../../modal/modals/child/ChildPopup";
+import { CCTVPopup, CMPopup } from "../../modal/modals/child/ChildPopup";
 import { useModalStore } from "../../stores/ModalStore";
 import MainMapLayerCart from "../../commponent/MainMapLayerCart";
 import MainMapBar from "../../commponent/MainMapBar";
@@ -20,15 +20,37 @@ const MainMap = () => {
     useEffect(() => {
         map.setTarget(null);
         map.setTarget("mainMap");
+        const mapClick = (e) => {
+            const feature = map.forEachFeatureAtPixel(e.pixel, function (feature) {
+                return feature
+            });
+            if (!feature) {
+                console.log('singleClick', e.coordinate);
+            } else {
+                switch (feature.get('name')) {
+                    case 'LT_P_UTISCCTV': //vworld cctv
+                        const data = feature.getProperties().data
+                        modalstore.setPopOpen(true, "CCTV", <CCTVPopup item={data} />, null);
+                        break;
+                    default:
+                        console.log(feature.get('id'));
+                        break;
+                }
+            }
+        };
+        map.on("click", mapClick);
+        return () => {
+            map.un("click", mapClick);
+        }
     }, []);
 
     return (
         <>
             <div id="mainmap_div" ref={ref}>
                 <div id="mainMap" />
-                <MainMapBar /> 
+                <MainMapBar />
                 <MainMapLayerCart />
-                <MainMapToolBox/>
+                <MainMapToolBox />
             </div >
         </>
     )
