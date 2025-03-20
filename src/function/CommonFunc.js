@@ -99,16 +99,6 @@ const cmparam = (name) => {
             "BUFFER": 0, // 버퍼 크기 (기본값: 0)
             "CALLBACK": "", // JSONP 콜백 (필요 시)
         }
-        // "CCTV": {
-        //     "VERSION": "1.0", // 기본값
-        //     "KEY": config.vworldKey, // key
-        //     "geometry": "POINT(127.0407943 37.5589599)", // 기본값
-        //     "srsName": "EPSG:3857",// 기본값 4326
-        //     "filter": "locate:like:서울특별시 성동구청",// GetFeature or GetFeatureType
-        //     "pageIndex": "1",
-        //     "pageUnit": "10",// emdCd(읍면동코드),locate(소재지),cctvname(cctv명),ag_geom(GEOMETRY 데이터)
-        // }
-
     }
     return param[name]
 }

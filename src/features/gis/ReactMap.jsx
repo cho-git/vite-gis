@@ -18,7 +18,6 @@ import Icon from "ol/style/Icon";
 import { Point } from "ol/geom";
 
 import "../../assets/css/map.css";
-import MainMap from "./MainMap";
 
 const ReactMap = () => {
 
@@ -34,10 +33,10 @@ const ReactMap = () => {
 
 
         if (ref.current) {
-            // map event
+
             map.on("click", mapClick); // 맵 클릭시 
             map.on("moveend", (e) => mapmove(e)); // 맵 이동시
-            ref.current.tabIndex = 0; // 키보드 이벤트 감지 위해 필수
+            ref.current.tabIndex = 0; // 키보드 이벤트 위해 필수
             ref.current.addEventListener("keydown", handleKeyDown);
 
             // map scale
@@ -45,7 +44,7 @@ const ReactMap = () => {
                 units: "metric",
                 minWidth: 100,
             })
-
+            
             map.addControl(scale);
         }
         return () => {
@@ -84,8 +83,6 @@ const ReactMap = () => {
         const feature = map.forEachFeatureAtPixel(e.pixel, function (feature) {
             return feature
         });
-        console.log(e)
-        // debugger
         if (!feature) {
             console.log('singleClick', e.coordinate);
         } else {
@@ -110,7 +107,7 @@ const ReactMap = () => {
         }
     }
 
-    const handleKeyDown = (e) => { // esc 이벤트
+    const handleKeyDown = (e) => { // esc 클릭시 종료
         if (e.key.toLowerCase() === "escape") {
             endDraw();
         }
@@ -160,7 +157,7 @@ const ReactMap = () => {
                                 geometry: new Point(data.coordi),
                                 data: data,
                             });
-                            console.log(feature.getProperties());
+
                             const style = new Style({
                                 image: new CircleStyle({
                                     radius: 7,
@@ -210,10 +207,10 @@ const ReactMap = () => {
     }
 
     const getGeoServerLayer = () => {
-        const layer = map.getLayers().getArray().find((item) => item.values_.id === "geoserver");
+        const layer = getLayer("geoserver");
         const visible = layer.getVisible()
         layer.setVisible(!visible);
-        moveCenter(!visible && [14081451.202739127, 4406399.457892129], !visible && 10);
+        moveCenter([14081451.202739127, 4406399.457892129], 10);
     }
    
     return (

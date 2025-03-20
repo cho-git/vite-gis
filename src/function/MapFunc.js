@@ -37,11 +37,7 @@ export function getLayer(id) {
 // coordi or 대흥역
 export function moveCenter(coordi, zoom) {
     const map = useMapStore.getState().map;
-    if (coordi) {
-        map.getView().setCenter(coordi);
-    } else {
-        map.getView().setCenter(fromLonLat([126.942069, 37.547771])); // 대흥역
-    }
+    map.getView().setCenter(coordi || fromLonLat([126.942069, 37.547771]));
     map.getView().setZoom(zoom || 10);
 }
 // type ="Poing , LineString , Polygon"
@@ -54,28 +50,13 @@ export function changeDraw(type, odd) {
     const layer = getLayer("drawLayer");
     const source = getSource("drawLayer");
     if (!source) return
-
-
     const draw = new Draw({
         source: source,
         type: type
     })
     let newstyle = style;
     if (odd) {
-        draw.on("drawstart", function (e) {
-            console.log('11');
-        })
         draw.on("drawend", function (e) {
-            draw.on("dbclick",function(e){
-                console.log('drawabort1');
-            })
-            draw.on("change:active",function(e){
-                console.log('drawabort2');
-            })
-            draw.on("drawabort",function(e){
-                console.log('drawabort3');
-            })
-            debugger
             const feature = e.feature;
             const length = source.getFeatures().length;
             if (length % 2 === 0) {
@@ -84,9 +65,15 @@ export function changeDraw(type, odd) {
                         color: "red",
                         width: 5
                     }),
+                    image: new CircleStyle({
+                        radius: 8,
+                        fill: new Fill({
+                            color: "red"
+                        })
+                    }),
                     fill: new Fill({
                         color: "rgba(255, 0, 0, 0.2)"
-                    })
+                    }),
                 })
                 feature.setStyle(oddStyle);
             }
@@ -125,7 +112,6 @@ export function changeMeasure(type, setItem, callBack) {
 
             if (geom instanceof Polygon) {
                 measure = formatArea(geom);
-
             } else if (geom instanceof LineString) {
                 measure = formatLength(geom);
             } else if (geom instanceof Circle) {
